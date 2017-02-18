@@ -57,12 +57,12 @@ class TravelMapViewController: UIViewController {
         let appManager = AppManager.main
         
         if let latitudeDelta = appManager.latitudeDelta, let longitudeDelta = appManager.longitudeDelta,
-            let latitude = appManager.latitude, let longitude = appManager.latitude {
+            let latitude = appManager.latitude, let longitude = appManager.longitude {
             
-            let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-            let regionSpan = MKCoordinateSpan(latitudeDelta: CLLocationDegrees(latitudeDelta), longitudeDelta: CLLocationDegrees(longitudeDelta))
+            let coordinate = CLLocationCoordinate2DMake(latitude, longitude)
+            let regionSpan = MKCoordinateSpanMake(latitudeDelta, longitudeDelta)
             let region = MKCoordinateRegionMake(coordinate, regionSpan)
-            print("LatDelta: \(latitudeDelta), LonDelta: \(longitudeDelta), Lat: \(latitude), Lon: \(longitude),")
+            
             travelMap.setRegion(region, animated: false)
         }
     }
@@ -85,13 +85,13 @@ class TravelMapViewController: UIViewController {
 
 extension TravelMapViewController {
     
-    func saveMapState() {
-        UserDefaults.standard.set(travelMap.region.span.latitudeDelta, forKey: AppManager.Constants.mapLatitudeDelta)
-        UserDefaults.standard.set(travelMap.region.span.longitudeDelta, forKey: AppManager.Constants.mapLongitudeDelta)
-        UserDefaults.standard.set(travelMap.region.center.latitude, forKey: AppManager.Constants.mapLatitud)
-        UserDefaults.standard.set(travelMap.region.center.longitude, forKey: AppManager.Constants.mapLongitud)
+    func updateMapState() {
+        let appManager = AppManager.main
         
-        print("Saved new location.")
+        appManager.latitudeDelta = travelMap.region.span.latitudeDelta
+        appManager.longitudeDelta = travelMap.region.span.longitudeDelta
+        appManager.latitude = travelMap.region.center.latitude
+        appManager.longitude = travelMap.region.center.longitude
     }
     
 }
@@ -116,12 +116,11 @@ extension TravelMapViewController: MKMapViewDelegate {
     
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         
-        saveMapState()
-        
         // Manage view clicking
         let photoAlbumController = storyboard?.instantiateViewController(withIdentifier: "PhotoAlbumViewController") as! PhotoAlbumViewController
         photoAlbumController.mapAnnotation = view.annotation as! MKPointAnnotation
         
+        view.isSelected = false // Deselect view
         navigationController!.pushViewController(photoAlbumController, animated: true)
     }
     
@@ -139,7 +138,7 @@ extension TravelMapViewController: MKMapViewDelegate {
         UIView.animate(withDuration: 0.3) {
             self.navigationController!.navigationBar.alpha = 1
         }
-        saveMapState()
+        updateMapState()
     }
 
 }

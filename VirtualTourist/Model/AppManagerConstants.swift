@@ -14,8 +14,8 @@ extension AppManager {
         static let launchState = "hasLaunched"
         static let mapLatitudeDelta = "mapLatitudeDelta"
         static let mapLongitudeDelta = "mapLongitudeDelta"
-        static let mapLatitud = "mapLatitude"
-        static let mapLongitud = "mapLongitude"
+        static let mapLatitude = "mapLatitude"
+        static let mapLongitude = "mapLongitude"
     }
     
 }
