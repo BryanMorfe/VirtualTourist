@@ -63,6 +63,7 @@ class TravelMapViewController: UIViewController {
             let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
             let regionSpan = MKCoordinateSpan(latitudeDelta: CLLocationDegrees(latitudeDelta), longitudeDelta: CLLocationDegrees(longitudeDelta))
             let region = MKCoordinateRegionMake(coordinate, regionSpan)
+            print("LatDelta: \(latitudeDelta), LonDelta: \(longitudeDelta), Lat: \(latitude), Lon: \(longitude),")
             travelMap.setRegion(region, animated: false)
         }
     }

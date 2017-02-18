@@ -26,7 +26,7 @@ class AppManager {
         
         // This method is called as soon as the app finishes launching in the delegate of the app
         
-        if let _ = UserDefaults.standard.value(forKey: Constants.launchState) as? Bool {
+        if UserDefaults.standard.value(forKey: Constants.launchState) as? Bool == nil {
             isFirstLaunch = false
         } else {
             UserDefaults.standard.set(true, forKey: Constants.launchState)
