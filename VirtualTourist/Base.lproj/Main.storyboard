@@ -80,7 +80,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="r0j-rH-KqB">
-                                <rect key="frame" x="3" y="186" width="369" height="437"/>
+                                <rect key="frame" x="3" y="169" width="369" height="454"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="2YL-f7-5ES">
                                     <size key="itemSize" width="119" height="119"/>
@@ -117,7 +117,11 @@
                                 <rect key="frame" x="0.0" y="623" width="375" height="44"/>
                                 <items>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="re4-BB-VxU"/>
-                                    <barButtonItem title="New Collection" id="e9c-EY-RL3"/>
+                                    <barButtonItem title="New Collection" id="e9c-EY-RL3">
+                                        <connections>
+                                            <action selector="getNewCollection" destination="gtC-qU-m34" id="pBd-hz-R3W"/>
+                                        </connections>
+                                    </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="bgt-kX-z1R"/>
                                 </items>
                             </toolbar>
@@ -128,7 +132,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="ob9-Ve-FeT" firstAttribute="leading" secondItem="Y6a-rX-xow" secondAttribute="leading" id="13Z-U3-eJN"/>
-                            <constraint firstItem="r0j-rH-KqB" firstAttribute="top" secondItem="OTk-3T-Y9G" secondAttribute="bottom" constant="20" id="5Ew-v8-2U1"/>
+                            <constraint firstItem="r0j-rH-KqB" firstAttribute="top" secondItem="OTk-3T-Y9G" secondAttribute="bottom" constant="3" id="5Ew-v8-2U1"/>
                             <constraint firstAttribute="trailing" secondItem="OTk-3T-Y9G" secondAttribute="trailing" id="HuI-i9-H4H"/>
                             <constraint firstItem="OTk-3T-Y9G" firstAttribute="top" secondItem="Y6a-rX-xow" secondAttribute="top" id="LDG-az-Ff8"/>
                             <constraint firstItem="r0j-rH-KqB" firstAttribute="trailing" secondItem="Y6a-rX-xow" secondAttribute="trailingMargin" constant="13" id="UNT-gW-ooo"/>

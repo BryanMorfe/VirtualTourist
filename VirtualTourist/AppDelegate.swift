@@ -16,11 +16,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        setupNavigationBar()
-        application.statusBarStyle = .lightContent
+        globalViewSetup()
         
         // Configure the app
         AppManager.main.configure()
+        
+        // Setup status bar style
+        application.statusBarStyle = .lightContent
+        
         return true
     }
 
@@ -55,7 +58,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 extension AppDelegate {
     
-    func setupNavigationBar() {
+    func globalViewSetup() {
+        
+        // Navigation Bar
         let navBarAppearance = UINavigationBar.appearance()
         navBarAppearance.tintColor = .white
         navBarAppearance.barTintColor = ViewInterface.Constants.Colors.softRed
@@ -64,8 +69,17 @@ extension AppDelegate {
         navBarAppearance.setBackgroundImage(UIImage(), for: .default)
         navBarAppearance.titleTextAttributes = [
             NSForegroundColorAttributeName: UIColor.white,
-            NSFontAttributeName: UIFont(name: ".SFUIText", size: 17) as Any
+            NSFontAttributeName: UIFont(name: ".SFUIText", size: 18) as Any
         ]
+        
+        // Toolbar
+        let toolbarAppearance = UIToolbar.appearance()
+        toolbarAppearance.tintColor = .white
+        toolbarAppearance.barTintColor = ViewInterface.Constants.Colors.softRed
+        toolbarAppearance.isTranslucent = false
+        toolbarAppearance.setShadowImage(UIImage(), forToolbarPosition: .any)
+        toolbarAppearance.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
+        
     }
     
 }

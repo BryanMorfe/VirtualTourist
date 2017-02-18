@@ -12,7 +12,9 @@ import MapKit
 class PhotoAlbumViewController: UIViewController {
     
     var mapAnnotation: MKPointAnnotation!
+    
     @IBOutlet weak var tripMap: MKMapView!
+    @IBOutlet weak var newCollectionButton: UIBarButtonItem!
     
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var collectionViewFlowLayout: UICollectionViewFlowLayout!
@@ -22,6 +24,15 @@ class PhotoAlbumViewController: UIViewController {
         setupViews()
     }
 
+    @IBAction func getNewCollection() {
+        
+    }
+}
+
+// MARK: Convenience Methods
+
+extension PhotoAlbumViewController {
+    
     func setupViews() {
         
         /* Map */
@@ -49,6 +60,7 @@ class PhotoAlbumViewController: UIViewController {
         collectionViewFlowLayout.itemSize = CGSize(width: dimensions, height: dimensions)
         collectionViewFlowLayout.minimumInteritemSpacing = spacing
     }
+    
 }
 
 // MARK: Collection View Data Source

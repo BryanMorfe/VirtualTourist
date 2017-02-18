@@ -25,8 +25,8 @@ class TravelMapViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        if AppManager.main.isFirstLaunch == !true {
-            AppManager.main.isFirstLaunch = !false
+        if AppManager.main.isFirstLaunch == true {
+            AppManager.main.isFirstLaunch = false
             if UIDevice.current.orientation != .portrait {
                 UIDevice.current.setValue(UIDeviceOrientation.portrait.rawValue, forKey: "orientation")
             }
