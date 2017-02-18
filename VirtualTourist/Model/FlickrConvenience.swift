@@ -92,10 +92,10 @@ extension Flickr {
         
         let difference: Double = 1
         
-        let minLongitude = max(longitud - difference, -180)
+        let minLongitude = max(longitude - difference, -180)
         let minLatitud = max(latitude - difference, -90)
         
-        let maxLongitude = min(longitud + difference, 180)
+        let maxLongitude = min(longitude + difference, 180)
         let maxLatitud = min(latitude + difference, 90)
         
         return "\(minLongitude), \(minLatitud), \(maxLongitude), \(maxLatitud)"
