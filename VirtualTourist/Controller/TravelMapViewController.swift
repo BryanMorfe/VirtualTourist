@@ -54,10 +54,12 @@ class TravelMapViewController: UIViewController {
         travelMap.addGestureRecognizer(longPressGestureRecognizer)
         
         // Recover last state (if any)
-        let appManager = AppManager.main
-        
-        if let latitudeDelta = appManager.latitudeDelta, let longitudeDelta = appManager.longitudeDelta,
-            let latitude = appManager.latitude, let longitude = appManager.longitude {
+        if let mapState = AppManager.main.mapState {
+            
+            let latitudeDelta = mapState[AppManager.MapState.latitudeDelta] as! Double
+            let longitudeDelta = mapState[AppManager.MapState.longitudeDelta] as! Double
+            let latitude = mapState[AppManager.MapState.latitude] as! Double
+            let longitude = mapState[AppManager.MapState.longitude] as! Double
             
             let coordinate = CLLocationCoordinate2DMake(latitude, longitude)
             let regionSpan = MKCoordinateSpanMake(latitudeDelta, longitudeDelta)
@@ -86,12 +88,14 @@ class TravelMapViewController: UIViewController {
 extension TravelMapViewController {
     
     func updateMapState() {
-        let appManager = AppManager.main
+        let mapStateDictionary = [
+            AppManager.MapState.latitudeDelta : travelMap.region.span.latitudeDelta,
+            AppManager.MapState.longitudeDelta : travelMap.region.span.longitudeDelta,
+            AppManager.MapState.latitude : travelMap.region.center.latitude,
+            AppManager.MapState.longitude : travelMap.region.center.longitude
+        ]
         
-        appManager.latitudeDelta = travelMap.region.span.latitudeDelta
-        appManager.longitudeDelta = travelMap.region.span.longitudeDelta
-        appManager.latitude = travelMap.region.center.latitude
-        appManager.longitude = travelMap.region.center.longitude
+        AppManager.main.mapState = mapStateDictionary as [String : AnyObject]
     }
     
 }
