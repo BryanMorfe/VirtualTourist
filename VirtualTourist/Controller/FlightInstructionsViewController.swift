@@ -29,17 +29,18 @@ class FlightInstructionsViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if AppManager.main.isFirstLaunch == true {
-            performWelcomeAnimation()
-            performInstructionsAnimation(byWaiting: 6)
+            performWelcomeAnimation {
+                self.performInstructionsAnimation()
+            }
         } else {
-            performInstructionsAnimation(byWaiting: 0)
+            performInstructionsAnimation()
         }
     }
     
     func setup() {
         
-        // Gradient
         blueView = BlueGradientView()
+        blueView.animationInterval = 3
         view.addSubview(blueView)
         
         // Exit Button
@@ -51,24 +52,23 @@ class FlightInstructionsViewController: UIViewController {
         
     }
     
-    func performWelcomeAnimation() {
+    func performWelcomeAnimation(completion handler: @escaping (Void) -> Void) {
         
         finishButton.isEnabled = false
         
         blueView.setTitle(to: "Welcome to VirtualTourist", animated: true) {
-            self.blueView.setMessage(to: "The most realiable and fastest way to see the world. Guaranteed.", animated: true)
+            self.blueView.setMessage(to: "The most realiable and fastest way to see the world. Guaranteed.", animated: true) {
+                self.finishButton.isEnabled = true
+                handler()
+            }
         }
         
     }
     
-    func performInstructionsAnimation(byWaiting time: TimeInterval) {
-        
-        Timer.scheduledTimer(withTimeInterval: time, repeats: false) { (_) in
-            self.blueView.setTitle(to: "Instructions", animated: true) {
-                self.blueView.setMessage(to: "To travel, just long press a location in the traveling map and let the magic happen.", animated: true)
-            }
+    func performInstructionsAnimation() {
+        blueView.setTitle(to: "Instructions", animated: true) {
+            self.blueView.setMessage(to: "To travel, just long press a location in the traveling map and let the magic happen.", animated: true)
         }
-        
     }
     
     func finish() {

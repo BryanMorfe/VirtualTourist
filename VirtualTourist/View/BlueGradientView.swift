@@ -69,8 +69,6 @@ class BlueGradientView: UIView {
             return
         }
         
-        titleLabel.text = title
-        
         if titleLabel.layer.opacity > 0 {
             
             if animated {
@@ -78,6 +76,7 @@ class BlueGradientView: UIView {
                 UIView.animate(withDuration: animationInterval, animations: { 
                     self.titleLabel.layer.opacity = 0
                 }, completion: { (_) in
+                    self.titleLabel.text = title
                     Timer.scheduledTimer(withTimeInterval: self.animationInterval, repeats: false, block: { (_) in
                         self.isAnimatingTitle = false
                         if let handler = handler {
@@ -92,6 +91,7 @@ class BlueGradientView: UIView {
             
         } else {
             
+            self.titleLabel.text = title
             if animated {
                 isAnimatingTitle = true
                 UIView.animate(withDuration: animationInterval, animations: { 
@@ -117,8 +117,6 @@ class BlueGradientView: UIView {
             return
         }
         
-        messageLabel.text = message
-        
         if messageLabel.layer.opacity > 0 {
             
             if animated {
@@ -126,6 +124,7 @@ class BlueGradientView: UIView {
                 UIView.animate(withDuration: animationInterval, animations: {
                     self.messageLabel.layer.opacity = 0
                 }, completion: { (_) in
+                    self.messageLabel.text = message
                     Timer.scheduledTimer(withTimeInterval: self.animationInterval, repeats: false, block: { (_) in
                         self.isAnimatingTitle = false
                         if let handler = handler {
@@ -140,6 +139,7 @@ class BlueGradientView: UIView {
             
         } else {
             
+            messageLabel.text = message
             if animated {
                 isAnimatingMessage = true
                 UIView.animate(withDuration: animationInterval, animations: {
