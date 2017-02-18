@@ -12,7 +12,7 @@ import Foundation
 
 extension Flickr {
     
-    func getImages(from latitud: Double, longitude: Double, completion handler: @escaping (Bool, String) -> Void) {
+    func getImages(from pin: Pin, completion handler: @escaping (Bool, String) -> Void) {
         
         let parameters = [
             Flickr.Constants.ParameterKeys.method : Flickr.Constants.Methods.searchMethod,
@@ -20,7 +20,7 @@ extension Flickr {
             Flickr.Constants.ParameterKeys.extras : Flickr.Constants.ParameterValues.mediumURL,
             Flickr.Constants.ParameterKeys.noJSONCallback : Flickr.Constants.ParameterValues.disableJSONCallback,
             Flickr.Constants.ParameterKeys.responseFormat : Flickr.Constants.ParameterValues.jsonFormat,
-            Flickr.Constants.ParameterKeys.boundingBox : makeBoundingBox(from: latitud, longitud: longitude)
+            Flickr.Constants.ParameterKeys.boundingBox : makeBoundingBox(from: pin.latitude, longitude: pin.longitude)
         ]
         
         taskForGet(with: parameters as [String: AnyObject]) {
@@ -36,8 +36,19 @@ extension Flickr {
                 return
             }
             
-            print(data)
-            // Gather images
+            guard let photosDictionary = data[Constants.JSONResponseKeys.photos] as? [String : AnyObject] else {
+                handler(false, "Error retrieving photos dictionary.")
+                return
+            }
+            
+            guard let photosArray = photosDictionary[Constants.JSONResponseKeys.photo] as? [[String : AnyObject]] else {
+                handler(false, "Error accessing array of photos.")
+                return
+            }
+            
+            print(photosArray[0])
+            /* Have to finish implementing */
+            // Create Photo object
         }
     }
     
@@ -77,7 +88,7 @@ extension Flickr {
         
     }
     
-    private func makeBoundingBox(from latitude: Double, longitud: Double) -> String {
+    private func makeBoundingBox(from latitude: Double, longitude: Double) -> String {
         
         let difference: Double = 1
         
