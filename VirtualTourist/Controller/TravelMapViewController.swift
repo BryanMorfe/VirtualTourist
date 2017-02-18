@@ -65,6 +65,7 @@ class TravelMapViewController: UIViewController {
             let region = MKCoordinateRegionMake(coordinate, regionSpan)
             
             travelMap.setRegion(region, animated: false)
+            
         }
     }
     

@@ -62,7 +62,7 @@ class BlueGradientView: UIView {
     }
     
     // MARK: Setters
-    
+    /* Should add feature that allows text to be retained for certain ammount of time before it's changed */
     func setTitle(to title: String, animated: Bool, completion handler: ((Void) -> (Void))? = nil) {
         
         if isAnimatingTitle {
