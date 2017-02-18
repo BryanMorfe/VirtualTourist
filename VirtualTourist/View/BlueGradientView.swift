@@ -126,7 +126,7 @@ class BlueGradientView: UIView {
                 }, completion: { (_) in
                     self.messageLabel.text = message
                     Timer.scheduledTimer(withTimeInterval: self.animationInterval, repeats: false, block: { (_) in
-                        self.isAnimatingTitle = false
+                        self.isAnimatingMessage = false
                         if let handler = handler {
                             handler()
                         }
