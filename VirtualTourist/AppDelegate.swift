@@ -16,6 +16,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        setupNavigationBar()
+        application.statusBarStyle = .lightContent
+        
+        // Configure the app
+        AppManager.main.configure()
         return true
     }
 
@@ -44,3 +49,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 
+// MARK: Convenience Methods
+
+extension AppDelegate {
+    
+    func setupNavigationBar() {
+        let navBarAppearance = UINavigationBar.appearance()
+        navBarAppearance.tintColor = .white
+        navBarAppearance.barTintColor = ViewInterface.Constants.Colors.softRed
+        navBarAppearance.isTranslucent = false
+        navBarAppearance.shadowImage = UIImage()
+        navBarAppearance.setBackgroundImage(UIImage(), for: .default)
+        navBarAppearance.titleTextAttributes = [
+            NSForegroundColorAttributeName: UIColor.white,
+            NSFontAttributeName: UIFont(name: ".SFUIText", size: 17) as Any
+        ]
+    }
+    
+}
