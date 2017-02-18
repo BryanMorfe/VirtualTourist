@@ -14,8 +14,12 @@ class AppManager {
     
     static let main = AppManager()
     
+    // UserDefaults variables
     var isFirstLaunch: Bool!
     var mapState: [String : AnyObject]?
+    
+    // Core Data objects
+    var travelPins: [Pin]?
     
     // MARK: Methods
     
