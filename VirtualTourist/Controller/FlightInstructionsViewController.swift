@@ -39,7 +39,7 @@ class FlightInstructionsViewController: UIViewController {
     func setup() {
         
         // Gradient
-        let blueView = BlueGradientView()
+        blueView = BlueGradientView()
         view.addSubview(blueView)
         
         // Exit Button

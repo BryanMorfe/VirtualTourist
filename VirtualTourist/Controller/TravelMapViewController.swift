@@ -41,7 +41,6 @@ class TravelMapViewController: UIViewController {
         }
         let controller = FlightInstructionsViewController()
         present(controller, animated: true, completion: nil)
-        
     }
     
     func configureMap() {

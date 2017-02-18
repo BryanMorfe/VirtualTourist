@@ -13,10 +13,6 @@ extension AppManager {
     struct Constants {
         static let launchState = "hasLaunched"
         static let mapState = "mapState"
-        static let mapLatitudeDelta = "mapLatitudeDelta"
-        static let mapLongitudeDelta = "mapLongitudeDelta"
-        static let mapLatitude = "mapLatitude"
-        static let mapLongitude = "mapLongitude"
     }
     
     struct MapState {
