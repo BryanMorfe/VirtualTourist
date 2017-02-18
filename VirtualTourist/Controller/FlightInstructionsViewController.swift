@@ -55,48 +55,10 @@ class FlightInstructionsViewController: UIViewController {
         
         finishButton.isEnabled = false
         
-        // Title label
-        let titleLabel = UILabel()
-        titleLabel.frame = CGRect(x: view.frame.size.width * 0.10, y: 60, width: view.frame.size.width * 0.80, height: 44)
-        titleLabel.text = "Welcome to VirtualTourist"
-        titleLabel.font = titleFont
-        titleLabel.textColor = defaultFontColor
-        titleLabel.textAlignment = .center
-        view.addSubview(titleLabel)
-        titleLabel.layer.opacity = 0
-        
-        // Description label
-        let descriptionLabel = UILabel()
-        descriptionLabel.frame = CGRect(x: view.frame.size.width * 0.10, y: (view.frame.size.height / 2) - 22, width: view.frame.size.width * 0.80, height: 80)
-        descriptionLabel.font = descriptionFont
-        descriptionLabel.textColor = defaultFontColor
-        descriptionLabel.numberOfLines = 4
-        descriptionLabel.text = "The most realiable and fastest way to see the world. Guaranteed."
-        descriptionLabel.textAlignment = .center
-        view.addSubview(descriptionLabel)
-        descriptionLabel.layer.opacity = 0
-        
-        
-        // Start animmation
-        UIView.animate(withDuration: 3, animations: {
-            titleLabel.layer.opacity = 1
-        }) { (_) in
-            UIView.animate(withDuration: 3, animations: {
-                descriptionLabel.layer.opacity = 1
-            }, completion: { (_) in
-                UIView.animate(withDuration: 3, animations: {
-                    titleLabel.layer.opacity = 0
-                }, completion: { (_) in
-                    titleLabel.removeFromSuperview()
-                    UIView.animate(withDuration: 3, animations: { 
-                        descriptionLabel.layer.opacity = 0
-                    }, completion: { (_) in
-                        descriptionLabel.removeFromSuperview()
-                        self.finishButton.isEnabled = true
-                    })
-                })
-            })
+        blueView.setTitle(to: "Welcome to VirtualTourist", animated: true) {
+            self.blueView.setMessage(to: "The most realiable and fastest way to see the world. Guaranteed.", animated: true)
         }
+        
     }
     
     func performInstructionsAnimation(byWaiting time: TimeInterval) {

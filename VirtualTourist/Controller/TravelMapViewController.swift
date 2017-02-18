@@ -36,7 +36,6 @@ class TravelMapViewController: UIViewController {
     }
     
     @IBAction func showInstructions() {
-        
         if UIDevice.current.orientation != .portrait {
             UIDevice.current.setValue(UIDeviceOrientation.portrait.rawValue, forKey: "orientation")
         }
@@ -91,6 +90,8 @@ extension TravelMapViewController {
         UserDefaults.standard.set(travelMap.region.span.longitudeDelta, forKey: AppManager.Constants.mapLongitudeDelta)
         UserDefaults.standard.set(travelMap.region.center.latitude, forKey: AppManager.Constants.mapLatitud)
         UserDefaults.standard.set(travelMap.region.center.longitude, forKey: AppManager.Constants.mapLongitud)
+        
+        print("Saved new location.")
     }
     
 }
