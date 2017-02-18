@@ -146,10 +146,10 @@ class BlueGradientView: UIView {
                     self.messageLabel.layer.opacity = 1
                 }, completion: {
                     (_) in
+                    self.isAnimatingMessage = false
                     if let handler = handler {
                         handler()
                     }
-                    self.isAnimatingMessage = false
                 })
             } else {
                 messageLabel.layer.opacity = 1
