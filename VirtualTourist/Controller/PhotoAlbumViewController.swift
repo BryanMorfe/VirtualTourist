@@ -125,8 +125,8 @@ extension PhotoAlbumViewController {
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
         
         // Filter
-        let predicate = NSPredicate(format: "pin = %@", argumentArray: [AppManager.main.currentPin!])
-        fetchRequest.predicate = predicate
+//        let predicate = NSPredicate(format: "pin = %@", argumentArray: [AppManager.main.currentPin!])
+//        fetchRequest.predicate = predicate
         
         // Create fetched results controller
         fetchedResultsController = NSFetchedResultsController<NSFetchRequestResult>(fetchRequest: fetchRequest, managedObjectContext: AppManager.main.coreDataStack.context, sectionNameKeyPath: nil, cacheName: nil)
@@ -170,7 +170,6 @@ extension PhotoAlbumViewController: UICollectionViewDataSource {
         
         let photo = fetchedResultsController!.object(at: indexPath) as! Photo
         let image = UIImage(data: photo.image!)
-        
         cell.imageView.image = image
         
         return cell

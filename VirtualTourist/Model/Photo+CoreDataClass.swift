@@ -12,10 +12,12 @@ import CoreData
 @objc(Photo)
 public class Photo: NSManagedObject {
 
-    convenience init(photoDictionary: [String : AnyObject], context: NSManagedObjectContext) {
+    convenience init(pin: Pin, photoDictionary: [String : AnyObject], context: NSManagedObjectContext) {
         
         if let entity = NSEntityDescription.entity(forEntityName: AppManager.Constants.EntityNames.photo, in: context) {
             self.init(entity: entity, insertInto: context)
+            
+            self.pin = pin
             
             guard let title = photoDictionary[Flickr.Constants.JSONResponseKeys.title] as? String else {
                 fatalError("Could not retrieve the title of the photo.")
