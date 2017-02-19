@@ -126,7 +126,6 @@ extension PhotoAlbumViewController {
         
         // Filter
         let predicate = NSPredicate(format: "pin = %@", argumentArray: [AppManager.main.currentPin!])
-        
         fetchRequest.predicate = predicate
         
         // Create fetched results controller
@@ -148,7 +147,10 @@ extension PhotoAlbumViewController {
                 self.collectionView.reloadData()
             }
         } else {
-            noImagesLabel.isHidden = false
+            DispatchQueue.main.async {
+                self.noImagesLabel.isHidden = false
+            }
+            
         }
         
     }
@@ -167,7 +169,6 @@ extension PhotoAlbumViewController: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FlickrImageCell", for: indexPath) as! TripCollectionViewCell
         
         let photo = fetchedResultsController!.object(at: indexPath) as! Photo
-        
         let image = UIImage(data: photo.image!)
         
         cell.imageView.image = image
