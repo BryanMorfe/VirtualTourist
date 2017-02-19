@@ -106,13 +106,13 @@ extension TravelMapViewController {
             print("Cannot perform search.")
         }
         
-        if let objects = fetchedRequestController?.fetchedObjects as? [Pin], objects.count > 0 {
-            print("Went in with count: \(objects.count)")
-            for pin in objects {
+        if let pins = fetchedRequestController?.fetchedObjects as? [Pin], pins.count > 0 {
+            for pin in pins {
                 let annotation = MKPointAnnotation()
                 annotation.coordinate = CLLocationCoordinate2DMake(pin.latitude, pin.longitude)
                 annotations.append(annotation)
             }
+            
             DispatchQueue.main.async {
                 self.travelMap.addAnnotations(annotations)
             }
@@ -163,12 +163,6 @@ extension TravelMapViewController: MKMapViewDelegate {
     
     func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
         
-    }
-    
-    func mapView(_ mapView: MKMapView, regionWillChangeAnimated animated: Bool) {
-        UIView.animate(withDuration: 0.3) { 
-            self.navigationController!.navigationBar.alpha = 0.3
-        }
     }
     
     func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {

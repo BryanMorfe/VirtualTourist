@@ -146,6 +146,7 @@ extension PhotoAlbumViewController {
             DispatchQueue.main.async {
                 self.collectionView.reloadData()
             }
+            shouldDownloadImages = false
         } else {
             DispatchQueue.main.async {
                 self.noImagesLabel.isHidden = false
