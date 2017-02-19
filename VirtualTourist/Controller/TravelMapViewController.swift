@@ -14,6 +14,8 @@ class TravelMapViewController: UIViewController {
     
     var fetchedRequestController: NSFetchedResultsController<NSFetchRequestResult>?
     
+    var annotations = [MKAnnotation]()
+    
     @IBOutlet weak var travelMap: MKMapView!
         
     override func viewDidLoad() {
@@ -93,7 +95,7 @@ extension TravelMapViewController {
     
     func loadPins() {
         
-        var annotations = [MKAnnotation]()
+        travelMap.removeAnnotations(annotations)
         
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: AppManager.Constants.EntityNames.pin)
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "latitude", ascending: true)]
@@ -115,7 +117,7 @@ extension TravelMapViewController {
             }
             
             DispatchQueue.main.async {
-                self.travelMap.addAnnotations(annotations)
+                self.travelMap.addAnnotations(self.annotations)
             }
         }
     }

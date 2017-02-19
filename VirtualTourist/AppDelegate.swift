@@ -16,6 +16,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
         globalViewSetup()
         
         // Configure the app manager
@@ -23,6 +24,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Setup AutoSave of core data
         AppManager.main.coreDataStack.save(every: 60)
+        
+        // WARNING: ONLY UNCOMMENT FOLLOWING CODE IF YOU WANT TO DELETE ALL STORED DATA OF APP
+        //try? AppManager.main.coreDataStack.removeAllData()
         
         return true
     }

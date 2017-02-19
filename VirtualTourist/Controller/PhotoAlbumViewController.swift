@@ -139,7 +139,7 @@ extension PhotoAlbumViewController {
         }
         
         // Create fetched results controller
-        fetchedResultsController = NSFetchedResultsController<NSFetchRequestResult>(fetchRequest: fetchRequest, managedObjectContext: AppManager.main.coreDataStack.context, sectionNameKeyPath: nil, cacheName: nil)
+        fetchedResultsController = NSFetchedResultsController<NSFetchRequestResult>(fetchRequest: fetchRequest, managedObjectContext: AppManager.main.coreDataStack.backgroundContext, sectionNameKeyPath: nil, cacheName: nil)
         
         // Set the delegate
         fetchedResultsController!.delegate = self
