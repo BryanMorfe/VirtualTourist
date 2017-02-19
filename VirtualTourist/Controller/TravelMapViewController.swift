@@ -84,10 +84,6 @@ class TravelMapViewController: UIViewController {
             annotation.coordinate = touchCoordinate
             travelMap.addAnnotation(annotation)
             annotations.append(annotation)
-            
-            // create pin for core data
-            let coreDataPin = Pin(latitude: touchCoordinate.latitude, longitude: touchCoordinate.longitude, photos: nil, context: AppManager.main.coreDataStack.context)
-            AppManager.main.currentPin = coreDataPin
         }
         
     }
@@ -101,6 +97,8 @@ extension TravelMapViewController {
     func loadPins() {
         
         travelMap.removeAnnotations(annotations)
+        print("Removed \(annotations.count) pins from map.")
+        annotations = []
         
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: AppManager.Constants.EntityNames.pin)
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "latitude", ascending: true)]
@@ -124,6 +122,7 @@ extension TravelMapViewController {
             
             DispatchQueue.main.async {
                 self.travelMap.addAnnotations(self.annotations)
+                print("Added \(self.annotations.count) annotations.")
             }
         }
     }
@@ -169,7 +168,11 @@ extension TravelMapViewController: MKMapViewDelegate {
         
         // Check if it's an existing pin else create a new pin object and assign to current working pin in app manager.
         let coordinate = view.annotation!.coordinate
-        AppManager.main.currentPin = AppManager.main.getPin(with: coordinate.latitude, longitude: coordinate.longitude) != nil ? AppManager.main.getPin(with: coordinate.latitude, longitude: coordinate.longitude) : Pin(latitude: coordinate.latitude, longitude: coordinate.longitude, photos: nil, context: AppManager.main.coreDataStack.context)
+        if let pin = AppManager.main.getPin(with: coordinate.latitude, longitude: coordinate.longitude) {
+            AppManager.main.currentPin = pin
+        } else {
+            AppManager.main.currentPin = Pin(latitude: coordinate.latitude, longitude: coordinate.longitude, photos: nil, context: AppManager.main.coreDataStack.context)
+        }
         
         navigationController!.pushViewController(photoAlbumController, animated: true)
     }

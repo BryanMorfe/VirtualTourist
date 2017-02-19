@@ -107,7 +107,7 @@ extension PhotoAlbumViewController {
         
         loadingIndicator = DotLoadingIndicator()
         loadingIndicator.dotStyle = .largeGray
-        loadingIndicator.frame.origin = CGPoint(x: (collectionView.frame.size.width / 2) - (loadingIndicator.frame.size.width / 2), y: (collectionView.frame.size.height / 2) - (loadingIndicator.frame.size.height / 2) - 44)
+        loadingIndicator.frame.origin = CGPoint(x: (collectionView.frame.size.width / 2) - (loadingIndicator.frame.size.width / 2), y: (collectionView.frame.size.height / 2) - (loadingIndicator.frame.size.height / 2) - 22)
         loadingIndicator.isHidden = true
         collectionView.addSubview(loadingIndicator)
         
@@ -118,7 +118,7 @@ extension PhotoAlbumViewController {
         noImagesLabel.font = UIFont(name: ".SFUIText-Bold", size: 18)
         noImagesLabel.textColor = .lightGray
         noImagesLabel.textAlignment = .center
-        noImagesLabel.frame = CGRect(x: collectionView.frame.size.width * 0.10, y: (collectionView.frame.size.height / 2) - 44, width: collectionView.frame.size.width * 0.80, height: 44)
+        noImagesLabel.frame = CGRect(x: collectionView.frame.size.width * 0.10, y: (collectionView.frame.size.height / 2) - 22, width: collectionView.frame.size.width * 0.80, height: 44)
         noImagesLabel.isHidden = true
         collectionView.addSubview(noImagesLabel)
         
