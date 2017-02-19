@@ -111,6 +111,7 @@ extension TravelMapViewController {
                 let annotation = MKPointAnnotation()
                 annotation.coordinate = CLLocationCoordinate2DMake(pin.latitude, pin.longitude)
                 annotations.append(annotation)
+                AppManager.main.pins.append(pin)
             }
             
             DispatchQueue.main.async {

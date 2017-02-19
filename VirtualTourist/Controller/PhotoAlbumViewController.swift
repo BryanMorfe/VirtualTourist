@@ -31,6 +31,7 @@ class PhotoAlbumViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
+        setupFetchedResultsController()
         if shouldDownloadImages {
             loadImages()
         }
@@ -125,8 +126,17 @@ extension PhotoAlbumViewController {
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
         
         // Filter
-        let predicate = NSPredicate(format: "pin = %@", argumentArray: [AppManager.main.currentPin!])
-        fetchRequest.predicate = predicate
+        var pin: Pin?
+        if let currentPin = AppManager.main.currentPin {
+            pin = currentPin
+        } else {
+            pin = AppManager.main.getPin(with: mapAnnotation.coordinate.latitude, longitude: mapAnnotation.coordinate.longitude)
+        }
+        
+        if let pin = pin {
+            let predicate = NSPredicate(format: "pin = %@", argumentArray: [pin])
+            fetchRequest.predicate = predicate
+        }
         
         // Create fetched results controller
         fetchedResultsController = NSFetchedResultsController<NSFetchRequestResult>(fetchRequest: fetchRequest, managedObjectContext: AppManager.main.coreDataStack.context, sectionNameKeyPath: nil, cacheName: nil)

@@ -52,4 +52,16 @@ class AppManager {
         
     }
     
+    func getPin(with latitude: Double, longitude: Double) -> Pin? {
+        
+        for pin in pins {
+            if pin.latitude == latitude && pin.longitude == longitude {
+                return pin
+            }
+        }
+        
+        return nil
+        
+    }
+    
 }
