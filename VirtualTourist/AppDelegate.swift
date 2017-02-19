@@ -25,7 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Setup AutoSave of core data
         AppManager.main.coreDataStack.save(every: 60)
         
-        // WARNING: ONLY UNCOMMENT FOLLOWING CODE IF YOU WANT TO DELETE ALL STORED DATA OF APP
+        // WARNING: ONLY UNCOMMENT FOLLOWING LINE IF YOU WANT TO DELETE ALL PERSISTED DATA FROM APP
         //try? AppManager.main.coreDataStack.removeAllData()
         
         return true

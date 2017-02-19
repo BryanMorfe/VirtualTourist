@@ -31,15 +31,20 @@ class PhotoAlbumViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         setupFetchedResultsController()
         if shouldDownloadImages {
             loadImages()
         }
     }
-
+    
     @IBAction func getNewCollection() {
         
     }
+    
 }
 
 // MARK: Convenience Methods
@@ -102,8 +107,8 @@ extension PhotoAlbumViewController {
         
         loadingIndicator = DotLoadingIndicator()
         loadingIndicator.dotStyle = .largeGray
-        loadingIndicator.frame.origin = CGPoint(x: (collectionView.frame.size.width / 2) - (loadingIndicator.frame.size.width / 2), y: (collectionView.frame.size.height / 2) - (loadingIndicator.frame.size.height / 2))
-        loadingIndicator.isHidden = false
+        loadingIndicator.frame.origin = CGPoint(x: (collectionView.frame.size.width / 2) - (loadingIndicator.frame.size.width / 2), y: (collectionView.frame.size.height / 2) - (loadingIndicator.frame.size.height / 2) - 44)
+        loadingIndicator.isHidden = true
         collectionView.addSubview(loadingIndicator)
         
         /* No images label */
@@ -113,7 +118,7 @@ extension PhotoAlbumViewController {
         noImagesLabel.font = UIFont(name: ".SFUIText-Bold", size: 18)
         noImagesLabel.textColor = .lightGray
         noImagesLabel.textAlignment = .center
-        noImagesLabel.frame = CGRect(x: collectionView.frame.size.width * 0.10, y: (collectionView.frame.size.height / 2) - 22, width: collectionView.frame.size.width * 0.80, height: 44)
+        noImagesLabel.frame = CGRect(x: collectionView.frame.size.width * 0.10, y: (collectionView.frame.size.height / 2) - 44, width: collectionView.frame.size.width * 0.80, height: 44)
         noImagesLabel.isHidden = true
         collectionView.addSubview(noImagesLabel)
         
@@ -125,21 +130,13 @@ extension PhotoAlbumViewController {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: AppManager.Constants.EntityNames.photo)
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
         
-        // Filter
-        var pin: Pin?
-        if let currentPin = AppManager.main.currentPin {
-            pin = currentPin
-        } else {
-            pin = AppManager.main.getPin(with: mapAnnotation.coordinate.latitude, longitude: mapAnnotation.coordinate.longitude)
-        }
         
-        if let pin = pin {
-            let predicate = NSPredicate(format: "pin = %@", argumentArray: [pin])
-            fetchRequest.predicate = predicate
-        }
+        let predicate = NSPredicate(format: "pin = %@", argumentArray: [AppManager.main.currentPin!])
+        fetchRequest.predicate = predicate
+        
         
         // Create fetched results controller
-        fetchedResultsController = NSFetchedResultsController<NSFetchRequestResult>(fetchRequest: fetchRequest, managedObjectContext: AppManager.main.coreDataStack.backgroundContext, sectionNameKeyPath: nil, cacheName: nil)
+        fetchedResultsController = NSFetchedResultsController<NSFetchRequestResult>(fetchRequest: fetchRequest, managedObjectContext: AppManager.main.coreDataStack.context, sectionNameKeyPath: nil, cacheName: nil)
         
         // Set the delegate
         fetchedResultsController!.delegate = self
@@ -158,10 +155,7 @@ extension PhotoAlbumViewController {
             }
             shouldDownloadImages = false
         } else {
-            DispatchQueue.main.async {
-                self.noImagesLabel.isHidden = false
-            }
-            
+            shouldDownloadImages = true
         }
         
     }

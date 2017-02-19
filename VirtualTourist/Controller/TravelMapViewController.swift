@@ -83,6 +83,11 @@ class TravelMapViewController: UIViewController {
             let annotation = MKPointAnnotation()
             annotation.coordinate = touchCoordinate
             travelMap.addAnnotation(annotation)
+            annotations.append(annotation)
+            
+            // create pin for core data
+            let coreDataPin = Pin(latitude: touchCoordinate.latitude, longitude: touchCoordinate.longitude, photos: nil, context: AppManager.main.coreDataStack.context)
+            AppManager.main.currentPin = coreDataPin
         }
         
     }
@@ -109,6 +114,7 @@ extension TravelMapViewController {
         }
         
         if let pins = fetchedRequestController?.fetchedObjects as? [Pin], pins.count > 0 {
+            
             for pin in pins {
                 let annotation = MKPointAnnotation()
                 annotation.coordinate = CLLocationCoordinate2DMake(pin.latitude, pin.longitude)
@@ -159,7 +165,11 @@ extension TravelMapViewController: MKMapViewDelegate {
         let photoAlbumController = storyboard?.instantiateViewController(withIdentifier: "PhotoAlbumViewController") as! PhotoAlbumViewController
         photoAlbumController.mapAnnotation = view.annotation as! MKPointAnnotation
         
-        view.setSelected(false, animated: false) // Deselect pin
+//        view.setSelected(false, animated: false) // Deselect pin
+        
+        // Check if it's an existing pin else create a new pin object and assign to current working pin in app manager.
+        let coordinate = view.annotation!.coordinate
+        AppManager.main.currentPin = AppManager.main.getPin(with: coordinate.latitude, longitude: coordinate.longitude) != nil ? AppManager.main.getPin(with: coordinate.latitude, longitude: coordinate.longitude) : Pin(latitude: coordinate.latitude, longitude: coordinate.longitude, photos: nil, context: AppManager.main.coreDataStack.context)
         
         navigationController!.pushViewController(photoAlbumController, animated: true)
     }

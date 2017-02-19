@@ -5,6 +5,8 @@
 //  Created by Bryan Morfe on 2/14/17.
 //  Copyright © 2017 Morfe. All rights reserved.
 //
+//  The app manager contains relevant properties and operations to the app
+//  including the state of the map, all loaded pins, current working pin, etc.
 
 import Foundation
 
@@ -59,9 +61,7 @@ class AppManager {
                 return pin
             }
         }
-        
         return nil
-        
     }
     
 }

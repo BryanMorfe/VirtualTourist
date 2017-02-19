@@ -8,6 +8,8 @@
 
 import Foundation
 
+// MARK: AppManager Constants
+
 extension AppManager {
     
     struct Constants {
