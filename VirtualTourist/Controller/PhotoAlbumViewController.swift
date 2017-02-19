@@ -16,6 +16,8 @@ class PhotoAlbumViewController: UIViewController {
     
     var mapAnnotation: MKPointAnnotation!
     
+    var loadingIndicator: DotLoadingIndicator!
+    
     @IBOutlet weak var tripMap: MKMapView!
     @IBOutlet weak var newCollectionButton: UIBarButtonItem!
     
@@ -25,7 +27,7 @@ class PhotoAlbumViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
-        setupFetchedResultsController()
+        loadImages()
     }
 
     @IBAction func getNewCollection() {
@@ -36,6 +38,29 @@ class PhotoAlbumViewController: UIViewController {
 // MARK: Convenience Methods
 
 extension PhotoAlbumViewController {
+    
+    func loadImages() {
+        // Disable UI and set loading state
+        newCollectionButton.isEnabled = false
+        loadingIndicator.isHidden = false
+        loadingIndicator.startAnimation()
+        Flickr.shared.getImages(from: mapAnnotation.coordinate.latitude, longitude: mapAnnotation.coordinate.longitude) { (success, errorString) in
+            // Enable UI
+            DispatchQueue.main.async {
+                self.newCollectionButton.isEnabled = true
+                self.loadingIndicator.stopAnimation()
+                self.loadingIndicator.isHidden = true
+            }
+            
+            if success {
+                self.setupFetchedResultsController()
+            } else {
+                print(errorString!)
+            }
+            
+        }
+        
+    }
     
     func setupViews() {
         
@@ -54,15 +79,25 @@ extension PhotoAlbumViewController {
         tripMap.addAnnotation(mapAnnotation)
         
         /* Collection View */
+        
         collectionView.dataSource = self
         
         // Cell Layout
         let desiredAmountOfItemsPerRow: CGFloat = 3
-        let spacing: CGFloat = 3
+        let spacing: CGFloat = 3 / 2
         let totalAvailableWidth = view.frame.width - 6
         let dimensions = (totalAvailableWidth / desiredAmountOfItemsPerRow) - ((desiredAmountOfItemsPerRow - 1) * spacing)
         collectionViewFlowLayout.itemSize = CGSize(width: dimensions, height: dimensions)
         collectionViewFlowLayout.minimumInteritemSpacing = spacing
+        collectionViewFlowLayout.minimumLineSpacing = spacing * 2
+        
+        /* Loading Indicator */
+        
+        loadingIndicator = DotLoadingIndicator()
+        loadingIndicator.dotStyle = .largeGray
+        loadingIndicator.frame.origin = CGPoint(x: (collectionView.frame.size.width / 2) - (loadingIndicator.frame.size.width / 2), y: (collectionView.frame.size.height / 2) - (loadingIndicator.frame.size.height / 2))
+        loadingIndicator.isHidden = false
+        collectionView.addSubview(loadingIndicator)
         
     }
     
@@ -99,11 +134,18 @@ extension PhotoAlbumViewController {
 extension PhotoAlbumViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return fetchedResultsController?.fetchedObjects?.count ?? 0
+        return fetchedResultsController?.sections?[section].objects?.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FlickrImageCell", for: indexPath) as! TripCollectionViewCell
+        
+        let photo = fetchedResultsController!.object(at: indexPath) as! Photo
+        
+        let image = UIImage(data: photo.image!)
+        
+        cell.imageView.image = image
+        
         return cell
     }
     

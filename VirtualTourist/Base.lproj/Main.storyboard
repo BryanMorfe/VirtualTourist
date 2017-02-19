@@ -80,7 +80,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="r0j-rH-KqB">
-                                <rect key="frame" x="3" y="169" width="369" height="454"/>
+                                <rect key="frame" x="3" y="169" width="369" height="451"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="2YL-f7-5ES">
                                     <size key="itemSize" width="119" height="119"/>
@@ -141,12 +141,13 @@
                             <constraint firstItem="r0j-rH-KqB" firstAttribute="leading" secondItem="Y6a-rX-xow" secondAttribute="leadingMargin" constant="-13" id="cl1-4f-tWb"/>
                             <constraint firstItem="OTk-3T-Y9G" firstAttribute="height" secondItem="Y6a-rX-xow" secondAttribute="height" multiplier="0.25" id="clR-EN-yTh"/>
                             <constraint firstAttribute="trailing" secondItem="ob9-Ve-FeT" secondAttribute="trailing" id="eRu-1e-jhH"/>
-                            <constraint firstItem="ob9-Ve-FeT" firstAttribute="top" secondItem="r0j-rH-KqB" secondAttribute="bottom" id="xSm-hC-ZqY"/>
+                            <constraint firstItem="ob9-Ve-FeT" firstAttribute="top" secondItem="r0j-rH-KqB" secondAttribute="bottom" constant="3" id="xSm-hC-ZqY"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="collectionView" destination="r0j-rH-KqB" id="6U7-yp-dQf"/>
                         <outlet property="collectionViewFlowLayout" destination="2YL-f7-5ES" id="7az-Q7-kKu"/>
+                        <outlet property="newCollectionButton" destination="e9c-EY-RL3" id="HMF-sx-CSx"/>
                         <outlet property="tripMap" destination="OTk-3T-Y9G" id="B4a-lg-ojm"/>
                     </connections>
                 </viewController>
