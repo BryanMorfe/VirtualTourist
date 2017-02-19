@@ -48,12 +48,14 @@ extension Flickr {
             
             let photos = NSSet()
             
+            let pin = Pin(latitude: latitude, longitude: longitude, photos: nil, context: AppManager.main.coreDataStack.context)
+            
             for photoDictionary in photosArray {
                 let photo = Photo(photoDictionary: photoDictionary, context: AppManager.main.coreDataStack.context)
                 photos.adding(photo)
             }
             
-            let pin = Pin(latitude: latitude, longitude: longitude, photos: photos, context: AppManager.main.coreDataStack.context)
+            pin.photos = photos
             
             AppManager.main.pins.append(pin)
             

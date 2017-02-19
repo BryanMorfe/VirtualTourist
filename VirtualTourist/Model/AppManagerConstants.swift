@@ -12,9 +12,10 @@ extension AppManager {
     
     struct Constants {
         
-        struct AppState {
+        struct App {
             static let launchState = "hasLaunched"
             static let mapState = "mapState"
+            static let modelName = "VirtualTouristModel"
         }
         
         struct MapState {
@@ -30,7 +31,5 @@ extension AppManager {
         }
         
     }
-    
-    
     
 }

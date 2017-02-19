@@ -14,7 +14,7 @@ public class Photo: NSManagedObject {
 
     convenience init(photoDictionary: [String : AnyObject], context: NSManagedObjectContext) {
         
-        if let entity = NSEntityDescription.entity(forEntityName: "Photo", in: context) {
+        if let entity = NSEntityDescription.entity(forEntityName: AppManager.Constants.EntityNames.photo, in: context) {
             self.init(entity: entity, insertInto: context)
             
             guard let title = photoDictionary[Flickr.Constants.JSONResponseKeys.title] as? String else {
@@ -41,9 +41,7 @@ public class Photo: NSManagedObject {
             image = imageData
             
         } else {
-            
             fatalError("Could not create entity from context.")
-            
         }
         
     }

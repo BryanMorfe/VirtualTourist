@@ -20,7 +20,7 @@ class AppManager {
     
     // Core Data objects
     var pins = [Pin]()
-    let coreDataStack = CoreDataStack(modelName: "VirtualTouristModel")!
+    let coreDataStack = CoreDataStack(modelName: AppManager.Constants.App.modelName)!
     
     // MARK: Methods
     
@@ -28,14 +28,14 @@ class AppManager {
         
         // This method is called as soon as the app finishes launching in the delegate of the app
         
-        if let _ = UserDefaults.standard.value(forKey: Constants.AppState.launchState) as? Bool {
+        if let _ = UserDefaults.standard.value(forKey: Constants.App.launchState) as? Bool {
             isFirstLaunch = false
         } else {
-            UserDefaults.standard.set(true, forKey: Constants.AppState.launchState)
+            UserDefaults.standard.set(true, forKey: Constants.App.launchState)
             isFirstLaunch = true
         }
         
-        if let mapState = UserDefaults.standard.value(forKey: Constants.AppState.mapState) as? [String : AnyObject] {
+        if let mapState = UserDefaults.standard.value(forKey: Constants.App.mapState) as? [String : AnyObject] {
             self.mapState = mapState
         }
         
@@ -46,7 +46,7 @@ class AppManager {
         // This method is called whenever the app goes into background or app terminates
         
         if let mapState = mapState {
-            UserDefaults.standard.set(mapState, forKey: Constants.AppState.mapState)
+            UserDefaults.standard.set(mapState, forKey: Constants.App.mapState)
         }
         
     }

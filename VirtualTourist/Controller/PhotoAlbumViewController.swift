@@ -25,6 +25,7 @@ class PhotoAlbumViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
+        setupFetchedResultsController()
     }
 
     @IBAction func getNewCollection() {
@@ -69,9 +70,10 @@ extension PhotoAlbumViewController {
         
         // Create request
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: AppManager.Constants.EntityNames.photo)
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
         
         // Create fetched results controller
-        fetchedResultsController = NSFetchedResultsController<NSFetchRequestResult>(fetchRequest: fetchRequest, managedObjectContext: <#T##NSManagedObjectContext#>, sectionNameKeyPath: <#T##String?#>, cacheName: <#T##String?#>)
+        fetchedResultsController = NSFetchedResultsController<NSFetchRequestResult>(fetchRequest: fetchRequest, managedObjectContext: AppManager.main.coreDataStack.context, sectionNameKeyPath: nil, cacheName: nil)
         
         // Set the delegate
         fetchedResultsController!.delegate = self
@@ -79,12 +81,15 @@ extension PhotoAlbumViewController {
         /* Perform search */
         do {
             try fetchedResultsController!.performFetch()
-        } catch let error as Error {
+        } catch let error {
             print("Error while performing search: \(error.localizedDescription)")
         }
         
         // Reload new data
-        collectionView.reloadData()
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
+        }
+        
     }
     
 }

@@ -124,7 +124,8 @@ extension TravelMapViewController: MKMapViewDelegate {
         let photoAlbumController = storyboard?.instantiateViewController(withIdentifier: "PhotoAlbumViewController") as! PhotoAlbumViewController
         photoAlbumController.mapAnnotation = view.annotation as! MKPointAnnotation
         
-        view.isSelected = false // Deselect view
+        view.setSelected(false, animated: false) // Deselect pin
+        
         navigationController!.pushViewController(photoAlbumController, animated: true)
     }
     
