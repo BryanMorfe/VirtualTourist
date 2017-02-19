@@ -12,7 +12,7 @@ import Foundation
 
 extension Flickr {
     
-    func getImages(from latitude: Double, longitude: Double, completion handler: @escaping (Bool, String) -> Void) {
+    func getImages(from latitude: Double, longitude: Double, completion handler: @escaping (Bool, String?) -> Void) {
         
         let parameters = [
             Flickr.Constants.ParameterKeys.method : Flickr.Constants.Methods.searchMethod,
@@ -46,9 +46,19 @@ extension Flickr {
                 return
             }
             
-            print(photosArray[0])
-            /* Have to finish implementing */
-            // Create Photo object
+            let photos = NSSet()
+            
+            for photoDictionary in photosArray {
+                let photo = Photo(photoDictionary: photoDictionary, context: AppManager.main.coreDataStack.context)
+                photos.adding(photo)
+            }
+            
+            let pin = Pin(latitude: latitude, longitude: longitude, photos: photos, context: AppManager.main.coreDataStack.context)
+            
+            AppManager.main.pins.append(pin)
+            
+            handler(true, nil)
+            
         }
     }
     

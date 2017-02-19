@@ -11,15 +11,26 @@ import Foundation
 extension AppManager {
     
     struct Constants {
-        static let launchState = "hasLaunched"
-        static let mapState = "mapState"
+        
+        struct AppState {
+            static let launchState = "hasLaunched"
+            static let mapState = "mapState"
+        }
+        
+        struct MapState {
+            static let latitudeDelta = "latitudeDelta"
+            static let longitudeDelta = "longitudeDelta"
+            static let latitude = "latitude"
+            static let longitude = "longitude"
+        }
+        
+        struct EntityNames {
+            static let pin = "Pin"
+            static let photo = "Photo"
+        }
+        
     }
     
-    struct MapState {
-        static let latitudeDelta = "latitudeDelta"
-        static let longitudeDelta = "longitudeDelta"
-        static let latitude = "latitude"
-        static let longitude = "longitude"
-    }
+    
     
 }

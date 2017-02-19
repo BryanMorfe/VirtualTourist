@@ -13,6 +13,7 @@ import CoreData
 public class Photo: NSManagedObject {
 
     convenience init(photoDictionary: [String : AnyObject], context: NSManagedObjectContext) {
+        
         if let entity = NSEntityDescription.entity(forEntityName: "Photo", in: context) {
             self.init(entity: entity, insertInto: context)
             
@@ -40,8 +41,11 @@ public class Photo: NSManagedObject {
             image = imageData
             
         } else {
+            
             fatalError("Could not create entity from context.")
+            
         }
+        
     }
     
 }

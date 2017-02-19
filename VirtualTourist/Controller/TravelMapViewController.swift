@@ -55,10 +55,10 @@ class TravelMapViewController: UIViewController {
         // Recover last state (if any)
         if let mapState = AppManager.main.mapState {
             
-            let latitudeDelta = mapState[AppManager.MapState.latitudeDelta] as! Double
-            let longitudeDelta = mapState[AppManager.MapState.longitudeDelta] as! Double
-            let latitude = mapState[AppManager.MapState.latitude] as! Double
-            let longitude = mapState[AppManager.MapState.longitude] as! Double
+            let latitudeDelta = mapState[AppManager.Constants.MapState.latitudeDelta] as! Double
+            let longitudeDelta = mapState[AppManager.Constants.MapState.longitudeDelta] as! Double
+            let latitude = mapState[AppManager.Constants.MapState.latitude] as! Double
+            let longitude = mapState[AppManager.Constants.MapState.longitude] as! Double
             
             let coordinate = CLLocationCoordinate2DMake(latitude, longitude)
             let regionSpan = MKCoordinateSpanMake(latitudeDelta, longitudeDelta)
@@ -89,10 +89,10 @@ extension TravelMapViewController {
     
     func updateMapState() {
         let mapStateDictionary = [
-            AppManager.MapState.latitudeDelta : travelMap.region.span.latitudeDelta,
-            AppManager.MapState.longitudeDelta : travelMap.region.span.longitudeDelta,
-            AppManager.MapState.latitude : travelMap.region.center.latitude,
-            AppManager.MapState.longitude : travelMap.region.center.longitude
+            AppManager.Constants.MapState.latitudeDelta : travelMap.region.span.latitudeDelta,
+            AppManager.Constants.MapState.longitudeDelta : travelMap.region.span.longitudeDelta,
+            AppManager.Constants.MapState.latitude : travelMap.region.center.latitude,
+            AppManager.Constants.MapState.longitude : travelMap.region.center.longitude
         ]
         
         AppManager.main.mapState = mapStateDictionary as [String : AnyObject]

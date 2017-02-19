@@ -8,8 +8,11 @@
 
 import UIKit
 import MapKit
+import CoreData
 
 class PhotoAlbumViewController: UIViewController {
+    
+    var fetchedResultsController: NSFetchedResultsController<NSFetchRequestResult>?
     
     var mapAnnotation: MKPointAnnotation!
     
@@ -59,6 +62,29 @@ extension PhotoAlbumViewController {
         let dimensions = (totalAvailableWidth / desiredAmountOfItemsPerRow) - ((desiredAmountOfItemsPerRow - 1) * spacing)
         collectionViewFlowLayout.itemSize = CGSize(width: dimensions, height: dimensions)
         collectionViewFlowLayout.minimumInteritemSpacing = spacing
+        
+    }
+    
+    func setupFetchedResultsController() {
+        
+        // Create request
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: AppManager.Constants.EntityNames.photo)
+        
+        // Create fetched results controller
+        fetchedResultsController = NSFetchedResultsController<NSFetchRequestResult>(fetchRequest: fetchRequest, managedObjectContext: <#T##NSManagedObjectContext#>, sectionNameKeyPath: <#T##String?#>, cacheName: <#T##String?#>)
+        
+        // Set the delegate
+        fetchedResultsController!.delegate = self
+        
+        /* Perform search */
+        do {
+            try fetchedResultsController!.performFetch()
+        } catch let error as Error {
+            print("Error while performing search: \(error.localizedDescription)")
+        }
+        
+        // Reload new data
+        collectionView.reloadData()
     }
     
 }
@@ -68,12 +94,26 @@ extension PhotoAlbumViewController {
 extension PhotoAlbumViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return fetchedResultsController?.fetchedObjects?.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FlickrImageCell", for: indexPath) as! TripCollectionViewCell
         return cell
+    }
+    
+}
+
+// MARK: NSFetchedResultsController Delegate
+
+extension PhotoAlbumViewController: NSFetchedResultsControllerDelegate {
+    
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        
+    }
+    
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        
     }
     
 }
