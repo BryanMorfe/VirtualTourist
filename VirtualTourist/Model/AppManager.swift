@@ -20,6 +20,7 @@ class AppManager {
     
     // Core Data objects
     var pins = [Pin]()
+    var currentPin: Pin?
     let coreDataStack = CoreDataStack(modelName: AppManager.Constants.App.modelName)!
     
     // MARK: Methods

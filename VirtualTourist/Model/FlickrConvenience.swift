@@ -52,11 +52,13 @@ extension Flickr {
             
             for photoDictionary in photosArray {
                 let photo = Photo(photoDictionary: photoDictionary, context: AppManager.main.coreDataStack.context)
+                photo.pin = pin
                 photos.adding(photo)
             }
             
             pin.photos = photos
             
+            AppManager.main.currentPin = pin
             AppManager.main.pins.append(pin)
             
             handler(true, nil)

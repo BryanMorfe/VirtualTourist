@@ -15,6 +15,8 @@ struct CoreDataStack {
     private let modelURL: URL
     let dbURL: URL
     let context: NSManagedObjectContext
+    let persistingContext: NSManagedObjectContext
+    let backgroundContext: NSManagedObjectContext
     
     init?(modelName: String) {
         
@@ -34,8 +36,14 @@ struct CoreDataStack {
         
         coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
         
+        persistingContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        persistingContext.persistentStoreCoordinator = coordinator
+        
         context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
-        context.persistentStoreCoordinator = coordinator
+        context.parent = persistingContext
+        
+        backgroundContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        backgroundContext.parent = context
         
         let fileManager = FileManager.default
         
@@ -64,6 +72,28 @@ extension CoreDataStack {
     
     func removeAllData() throws {
         try coordinator.destroyPersistentStore(at: dbURL, ofType: NSSQLiteStoreType, options: nil)
+        try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: dbURL, options: nil)
+    }
+    
+}
+
+// MARK: Background Context Operations
+
+extension CoreDataStack {
+    
+    func performBackgroundBatchOperations(batch: @escaping (NSManagedObjectContext) -> Void) {
+        
+        backgroundContext.perform {
+            
+            batch(self.backgroundContext)
+            
+            do {
+                try self.backgroundContext.save()
+            } catch {
+                print("Error saving in background context: \(error)")
+            }
+        }
+        
     }
     
 }
@@ -72,20 +102,40 @@ extension CoreDataStack {
 
 extension CoreDataStack {
     
-    func saveContext() throws {
-        if context.hasChanges {
-            try context.save()
+    func save() {
+        
+        context.performAndWait {
+            
+            if self.context.hasChanges {
+                do {
+                    try self.context.save()
+                    print("Saved in main context.")
+                } catch {
+                    print("Error in main context saving: \(error.localizedDescription)")
+                }
+            
+            
+                self.persistingContext.perform {
+                    do {
+                        try self.persistingContext.save()
+                        print("Saved in persisting context.")
+                    } catch {
+                        print("Error in the saving context: \(error.localizedDescription)")
+                    }
+                }
+            }
         }
+        
     }
     
     func save(every delay: TimeInterval) {
         
         if delay > 0 {
             do {
-                try saveContext()
+                try self.context.save()
                 print("Auto saved.")
             } catch {
-                print("Error while autosaving...")
+                print("Error while autosaving: \(error.localizedDescription)")
             }
             
             let nanoSeconds = UInt64(delay) * NSEC_PER_SEC

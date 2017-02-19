@@ -18,6 +18,10 @@ class PhotoAlbumViewController: UIViewController {
     
     var loadingIndicator: DotLoadingIndicator!
     
+    var shouldDownloadImages: Bool = true
+    
+    var noImagesLabel: UILabel!
+    
     @IBOutlet weak var tripMap: MKMapView!
     @IBOutlet weak var newCollectionButton: UIBarButtonItem!
     
@@ -27,7 +31,9 @@ class PhotoAlbumViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
-        loadImages()
+        if shouldDownloadImages {
+            loadImages()
+        }
     }
 
     @IBAction func getNewCollection() {
@@ -99,6 +105,17 @@ extension PhotoAlbumViewController {
         loadingIndicator.isHidden = false
         collectionView.addSubview(loadingIndicator)
         
+        /* No images label */
+        
+        noImagesLabel = UILabel()
+        noImagesLabel.text = "No Images Found"
+        noImagesLabel.font = UIFont(name: ".SFUIText-Bold", size: 18)
+        noImagesLabel.textColor = .lightGray
+        noImagesLabel.textAlignment = .center
+        noImagesLabel.frame = CGRect(x: collectionView.frame.size.width * 0.10, y: (collectionView.frame.size.height / 2) - 22, width: collectionView.frame.size.width * 0.80, height: 44)
+        noImagesLabel.isHidden = true
+        collectionView.addSubview(noImagesLabel)
+        
     }
     
     func setupFetchedResultsController() {
@@ -106,6 +123,11 @@ extension PhotoAlbumViewController {
         // Create request
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: AppManager.Constants.EntityNames.photo)
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+        
+        // Filter
+        let predicate = NSPredicate(format: "pin = %@", argumentArray: [AppManager.main.currentPin!])
+        
+        fetchRequest.predicate = predicate
         
         // Create fetched results controller
         fetchedResultsController = NSFetchedResultsController<NSFetchRequestResult>(fetchRequest: fetchRequest, managedObjectContext: AppManager.main.coreDataStack.context, sectionNameKeyPath: nil, cacheName: nil)
@@ -120,9 +142,13 @@ extension PhotoAlbumViewController {
             print("Error while performing search: \(error.localizedDescription)")
         }
         
-        // Reload new data
-        DispatchQueue.main.async {
-            self.collectionView.reloadData()
+        if let objects = fetchedResultsController!.fetchedObjects, objects.count > 0 {
+            // Reload new data
+            DispatchQueue.main.async {
+                self.collectionView.reloadData()
+            }
+        } else {
+            noImagesLabel.isHidden = false
         }
         
     }

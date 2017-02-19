@@ -8,8 +8,11 @@
 
 import UIKit
 import MapKit
+import CoreData
 
 class TravelMapViewController: UIViewController {
+    
+    var fetchedRequestController: NSFetchedResultsController<NSFetchRequestResult>?
     
     @IBOutlet weak var travelMap: MKMapView!
         
@@ -18,8 +21,9 @@ class TravelMapViewController: UIViewController {
         configureMap()
     }
     
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        loadPins()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -86,6 +90,34 @@ class TravelMapViewController: UIViewController {
 // MARK: Convenience Methods
 
 extension TravelMapViewController {
+    
+    func loadPins() {
+        
+        var annotations = [MKAnnotation]()
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: AppManager.Constants.EntityNames.pin)
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "latitude", ascending: true)]
+        
+        fetchedRequestController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: AppManager.main.coreDataStack.context, sectionNameKeyPath: nil, cacheName: nil)
+        
+        do {
+            try fetchedRequestController!.performFetch()
+        } catch {
+            print("Cannot perform search.")
+        }
+        
+        if let objects = fetchedRequestController?.fetchedObjects as? [Pin], objects.count > 0 {
+            print("Went in with count: \(objects.count)")
+            for pin in objects {
+                let annotation = MKPointAnnotation()
+                annotation.coordinate = CLLocationCoordinate2DMake(pin.latitude, pin.longitude)
+                annotations.append(annotation)
+            }
+            DispatchQueue.main.async {
+                self.travelMap.addAnnotations(annotations)
+            }
+        }
+    }
     
     func updateMapState() {
         let mapStateDictionary = [
