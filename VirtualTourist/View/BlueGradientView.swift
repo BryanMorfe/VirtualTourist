@@ -14,6 +14,7 @@ class BlueGradientView: UIView {
     var messageLabel: UILabel!
     
     var animationInterval: TimeInterval = 1
+    var waitingAnimationInterval: TimeInterval = 3
     
     private let defaultTitleFont = UIFont(name: ".SFUIDisplay-Light", size: 25)
     private let defaultMessageFont = UIFont(name: ".SFUIText-Light", size: 17)
@@ -73,19 +74,24 @@ class BlueGradientView: UIView {
             
             if animated {
                 isAnimatingTitle = true
-                UIView.animate(withDuration: animationInterval, animations: { 
-                    self.titleLabel.layer.opacity = 0
-                }, completion: { (_) in
-                    self.titleLabel.text = title
-                    Timer.scheduledTimer(withTimeInterval: self.animationInterval, repeats: false, block: { (_) in
-                        self.isAnimatingTitle = false
-                        if let handler = handler {
-                            handler()
-                        }
+                Timer.scheduledTimer(withTimeInterval: waitingAnimationInterval, repeats: false, block: {
+                    (_) in
+                    
+                    UIView.animate(withDuration: self.animationInterval, animations: {
+                        self.titleLabel.layer.opacity = 0
+                    }, completion: { (_) in
+                        self.titleLabel.text = title
+                        Timer.scheduledTimer(withTimeInterval: self.animationInterval, repeats: false, block: { (_) in
+                            self.isAnimatingTitle = false
+                            if let handler = handler {
+                                handler()
+                            }
+                        })
+                        UIView.animate(withDuration: self.animationInterval, animations: {
+                            self.titleLabel.layer.opacity = 1
+                        })
                     })
-                    UIView.animate(withDuration: self.animationInterval, animations: { 
-                        self.titleLabel.layer.opacity = 1
-                    })
+                    
                 })
             }
             
@@ -121,19 +127,24 @@ class BlueGradientView: UIView {
             
             if animated {
                 isAnimatingMessage = true
-                UIView.animate(withDuration: animationInterval, animations: {
-                    self.messageLabel.layer.opacity = 0
-                }, completion: { (_) in
-                    self.messageLabel.text = message
-                    Timer.scheduledTimer(withTimeInterval: self.animationInterval, repeats: false, block: { (_) in
-                        self.isAnimatingMessage = false
-                        if let handler = handler {
-                            handler()
-                        }
-                    })
+                Timer.scheduledTimer(withTimeInterval: waitingAnimationInterval, repeats: false, block: {
+                    (_) in
+                    
                     UIView.animate(withDuration: self.animationInterval, animations: {
-                        self.messageLabel.layer.opacity = 1
+                        self.messageLabel.layer.opacity = 0
+                    }, completion: { (_) in
+                        self.messageLabel.text = message
+                        Timer.scheduledTimer(withTimeInterval: self.animationInterval, repeats: false, block: { (_) in
+                            self.isAnimatingMessage = false
+                            if let handler = handler {
+                                handler()
+                            }
+                        })
+                        UIView.animate(withDuration: self.animationInterval, animations: {
+                            self.messageLabel.layer.opacity = 1
+                        })
                     })
+                    
                 })
             }
             

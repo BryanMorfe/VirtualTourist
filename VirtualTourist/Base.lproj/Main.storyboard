@@ -6,7 +6,6 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -132,13 +131,13 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="ob9-Ve-FeT" firstAttribute="leading" secondItem="Y6a-rX-xow" secondAttribute="leading" id="13Z-U3-eJN"/>
+                            <constraint firstItem="r0j-rH-KqB" firstAttribute="width" secondItem="Y6a-rX-xow" secondAttribute="width" constant="-6" id="3ea-3u-Uv6"/>
                             <constraint firstItem="r0j-rH-KqB" firstAttribute="top" secondItem="OTk-3T-Y9G" secondAttribute="bottom" constant="3" id="5Ew-v8-2U1"/>
+                            <constraint firstItem="r0j-rH-KqB" firstAttribute="leading" secondItem="OTk-3T-Y9G" secondAttribute="leading" constant="3" id="6Ja-mg-msG"/>
                             <constraint firstAttribute="trailing" secondItem="OTk-3T-Y9G" secondAttribute="trailing" id="HuI-i9-H4H"/>
                             <constraint firstItem="OTk-3T-Y9G" firstAttribute="top" secondItem="Y6a-rX-xow" secondAttribute="top" id="LDG-az-Ff8"/>
-                            <constraint firstItem="r0j-rH-KqB" firstAttribute="trailing" secondItem="Y6a-rX-xow" secondAttribute="trailingMargin" constant="13" id="UNT-gW-ooo"/>
                             <constraint firstItem="VbA-rI-Rwi" firstAttribute="top" secondItem="ob9-Ve-FeT" secondAttribute="bottom" id="YAk-Kr-8Wr"/>
                             <constraint firstItem="OTk-3T-Y9G" firstAttribute="leading" secondItem="Y6a-rX-xow" secondAttribute="leading" id="cNt-LZ-Bjb"/>
-                            <constraint firstItem="r0j-rH-KqB" firstAttribute="leading" secondItem="Y6a-rX-xow" secondAttribute="leadingMargin" constant="-13" id="cl1-4f-tWb"/>
                             <constraint firstItem="OTk-3T-Y9G" firstAttribute="height" secondItem="Y6a-rX-xow" secondAttribute="height" multiplier="0.25" id="clR-EN-yTh"/>
                             <constraint firstAttribute="trailing" secondItem="ob9-Ve-FeT" secondAttribute="trailing" id="eRu-1e-jhH"/>
                             <constraint firstItem="ob9-Ve-FeT" firstAttribute="top" secondItem="r0j-rH-KqB" secondAttribute="bottom" constant="3" id="xSm-hC-ZqY"/>

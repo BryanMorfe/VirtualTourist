@@ -12,15 +12,12 @@ import CoreData
 @objc(Pin)
 public class Pin: NSManagedObject {
     
-    convenience init(latitude: Double, longitude: Double, photos: NSSet?, context: NSManagedObjectContext) {
+    convenience init(latitude: Double, longitude: Double, context: NSManagedObjectContext) {
         
         if let entity = NSEntityDescription.entity(forEntityName: AppManager.Constants.EntityNames.pin, in: context) {
             self.init(entity: entity, insertInto: context)
             self.latitude = latitude
             self.longitude = longitude
-            if let argPhotos = photos {
-                self.photos = argPhotos
-            }
             
         } else {
             fatalError("Could not create entity with provided context.")

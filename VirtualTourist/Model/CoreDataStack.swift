@@ -131,12 +131,8 @@ extension CoreDataStack {
     func save(every delay: TimeInterval) {
         
         if delay > 0 {
-            do {
-                try self.context.save()
-                print("Auto saved.")
-            } catch {
-                print("Error while autosaving: \(error.localizedDescription)")
-            }
+            
+            save()
             
             let nanoSeconds = UInt64(delay) * NSEC_PER_SEC
             let time = DispatchTime.now() + Double(nanoSeconds) / Double(NSEC_PER_SEC)

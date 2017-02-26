@@ -54,7 +54,6 @@ extension Flickr {
                 photos.append(photo)
             }
             
-            pin.photos = NSSet(array: photos)
             AppManager.main.pins.append(pin)
             
             handler(true, nil)

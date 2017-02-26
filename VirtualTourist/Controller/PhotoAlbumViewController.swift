@@ -55,6 +55,7 @@ extension PhotoAlbumViewController {
         // Disable UI and set loading state
         newCollectionButton.isEnabled = false
         loadingIndicator.isHidden = false
+        noImagesLabel.isHidden = true
         loadingIndicator.startAnimation()
         Flickr.shared.getImages(from: mapAnnotation.coordinate.latitude, longitude: mapAnnotation.coordinate.longitude) { (success, errorString) in
             // Enable UI
@@ -118,7 +119,7 @@ extension PhotoAlbumViewController {
         noImagesLabel.font = UIFont(name: ".SFUIText-Bold", size: 18)
         noImagesLabel.textColor = .lightGray
         noImagesLabel.textAlignment = .center
-        noImagesLabel.frame = CGRect(x: collectionView.frame.size.width * 0.10, y: (collectionView.frame.size.height / 2) - 22, width: collectionView.frame.size.width * 0.80, height: 44)
+        noImagesLabel.frame = CGRect(x: collectionView.frame.size.width * 0.10, y: (collectionView.frame.size.height / 2) - 22 - 22, width: collectionView.frame.size.width * 0.80, height: 44)
         noImagesLabel.isHidden = true
         collectionView.addSubview(noImagesLabel)
         
@@ -155,6 +156,7 @@ extension PhotoAlbumViewController {
             }
             shouldDownloadImages = false
         } else {
+            noImagesLabel.isHidden = false
             shouldDownloadImages = true
         }
         

@@ -164,14 +164,15 @@ extension TravelMapViewController: MKMapViewDelegate {
         let photoAlbumController = storyboard?.instantiateViewController(withIdentifier: "PhotoAlbumViewController") as! PhotoAlbumViewController
         photoAlbumController.mapAnnotation = view.annotation as! MKPointAnnotation
         
-//        view.setSelected(false, animated: false) // Deselect pin
+        view.setSelected(false, animated: false) // Deselect pin
         
         // Check if it's an existing pin else create a new pin object and assign to current working pin in app manager.
         let coordinate = view.annotation!.coordinate
         if let pin = AppManager.main.getPin(with: coordinate.latitude, longitude: coordinate.longitude) {
             AppManager.main.currentPin = pin
         } else {
-            AppManager.main.currentPin = Pin(latitude: coordinate.latitude, longitude: coordinate.longitude, photos: nil, context: AppManager.main.coreDataStack.context)
+            AppManager.main.currentPin = Pin(latitude: coordinate.latitude, longitude: coordinate.longitude, context: AppManager.main.coreDataStack.context)
+            AppManager.main.pins.append(AppManager.main.currentPin!)
         }
         
         navigationController!.pushViewController(photoAlbumController, animated: true)
