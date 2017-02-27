@@ -89,6 +89,7 @@ extension CoreDataStack {
             
             do {
                 try self.backgroundContext.save()
+                print("Saved in background context")
             } catch {
                 print("Error saving in background context: \(error)")
             }

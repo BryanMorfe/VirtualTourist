@@ -97,7 +97,6 @@ extension TravelMapViewController {
     func loadPins() {
         
         travelMap.removeAnnotations(annotations)
-        print("Removed \(annotations.count) pins from map.")
         annotations = []
         
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: AppManager.Constants.EntityNames.pin)
@@ -171,8 +170,11 @@ extension TravelMapViewController: MKMapViewDelegate {
         if let pin = AppManager.main.getPin(with: coordinate.latitude, longitude: coordinate.longitude) {
             AppManager.main.currentPin = pin
         } else {
-            AppManager.main.currentPin = Pin(latitude: coordinate.latitude, longitude: coordinate.longitude, context: AppManager.main.coreDataStack.context)
-            AppManager.main.pins.append(AppManager.main.currentPin!)
+            AppManager.main.coreDataStack.performBackgroundBatchOperations {
+                backgroundContext in
+                AppManager.main.currentPin = Pin(latitude: coordinate.latitude, longitude: coordinate.longitude, context: backgroundContext)
+                AppManager.main.pins.append(AppManager.main.currentPin!)
+            }
         }
         
         navigationController!.pushViewController(photoAlbumController, animated: true)

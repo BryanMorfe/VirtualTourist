@@ -16,8 +16,6 @@ class PhotoAlbumViewController: UIViewController {
     
     var mapAnnotation: MKPointAnnotation!
     
-    var loadingIndicator: DotLoadingIndicator!
-    
     var shouldDownloadImages: Bool = true
     
     var noImagesLabel: UILabel!
@@ -35,14 +33,31 @@ class PhotoAlbumViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setupFetchedResultsController()
-        if shouldDownloadImages {
-            loadImages()
+        
+        DispatchQueue.main.async {
+            self.startFetch()
         }
+        
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        AppManager.main.expectedPhotoAmount = 0
     }
     
     @IBAction func getNewCollection() {
         
+        // Delete all photos if any
+        if let photos = fetchedResultsController?.fetchedObjects as? [Photo] {
+            for photo in photos {
+                AppManager.main.coreDataStack.context.delete(photo)
+            }
+        }
+        
+        // Download new photos
+        
+        // Need to fix it because these photos are created in background context and the pins are in main context
+        downloadImages()
     }
     
 }
@@ -51,22 +66,26 @@ class PhotoAlbumViewController: UIViewController {
 
 extension PhotoAlbumViewController {
     
-    func loadImages() {
+    func downloadImages() {
+        
         // Disable UI and set loading state
         newCollectionButton.isEnabled = false
-        loadingIndicator.isHidden = false
         noImagesLabel.isHidden = true
-        loadingIndicator.startAnimation()
-        Flickr.shared.getImages(from: mapAnnotation.coordinate.latitude, longitude: mapAnnotation.coordinate.longitude) { (success, errorString) in
-            // Enable UI
+        
+        Flickr.shared.getImages(from: mapAnnotation.coordinate.latitude, longitude: mapAnnotation.coordinate.longitude) {
+            (success, errorString) in
+            
             DispatchQueue.main.async {
-                self.newCollectionButton.isEnabled = true
-                self.loadingIndicator.stopAnimation()
-                self.loadingIndicator.isHidden = true
+                self.collectionView.reloadData()
             }
             
             if success {
-                self.setupFetchedResultsController()
+                
+                // If there are no images fetched, then show the no images label
+                if AppManager.main.expectedPhotoAmount == 0 {
+                    self.noImagesLabel.isHidden = false
+                }
+                
             } else {
                 print(errorString!)
             }
@@ -94,6 +113,7 @@ extension PhotoAlbumViewController {
         /* Collection View */
         
         collectionView.dataSource = self
+        collectionView.delegate = self
         
         // Cell Layout
         let desiredAmountOfItemsPerRow: CGFloat = 3
@@ -103,14 +123,6 @@ extension PhotoAlbumViewController {
         collectionViewFlowLayout.itemSize = CGSize(width: dimensions, height: dimensions)
         collectionViewFlowLayout.minimumInteritemSpacing = spacing
         collectionViewFlowLayout.minimumLineSpacing = spacing * 2
-        
-        /* Loading Indicator */
-        
-        loadingIndicator = DotLoadingIndicator()
-        loadingIndicator.dotStyle = .largeGray
-        loadingIndicator.frame.origin = CGPoint(x: (collectionView.frame.size.width / 2) - (loadingIndicator.frame.size.width / 2), y: (collectionView.frame.size.height / 2) - (loadingIndicator.frame.size.height / 2) - 22)
-        loadingIndicator.isHidden = true
-        collectionView.addSubview(loadingIndicator)
         
         /* No images label */
         
@@ -125,39 +137,42 @@ extension PhotoAlbumViewController {
         
     }
     
-    func setupFetchedResultsController() {
+    func searchResults() {
         
-        // Create request
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: AppManager.Constants.EntityNames.photo)
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
-        
-        
-        let predicate = NSPredicate(format: "pin = %@", argumentArray: [AppManager.main.currentPin!])
-        fetchRequest.predicate = predicate
-        
-        
-        // Create fetched results controller
-        fetchedResultsController = NSFetchedResultsController<NSFetchRequestResult>(fetchRequest: fetchRequest, managedObjectContext: AppManager.main.coreDataStack.context, sectionNameKeyPath: nil, cacheName: nil)
-        
-        // Set the delegate
-        fetchedResultsController!.delegate = self
-        
-        /* Perform search */
         do {
-            try fetchedResultsController!.performFetch()
+            try self.fetchedResultsController!.performFetch()
         } catch let error {
             print("Error while performing search: \(error.localizedDescription)")
         }
         
-        if let objects = fetchedResultsController!.fetchedObjects, objects.count > 0 {
-            // Reload new data
-            DispatchQueue.main.async {
-                self.collectionView.reloadData()
-            }
-            shouldDownloadImages = false
+    }
+    
+    func startFetch() {
+            
+        // Create request
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: AppManager.Constants.EntityNames.photo)
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+            
+        let predicate = NSPredicate(format: "pin = %@", argumentArray: [AppManager.main.currentPin!])
+        fetchRequest.predicate = predicate
+            
+            
+        // Create fetched results controller
+        fetchedResultsController = NSFetchedResultsController<NSFetchRequestResult>(fetchRequest: fetchRequest, managedObjectContext: AppManager.main.coreDataStack.context, sectionNameKeyPath: nil, cacheName: nil)
+            
+        // Set the delegate
+        fetchedResultsController!.delegate = self
+            
+        /* Perform search */
+        searchResults()
+            
+        if let count = fetchedResultsController!.fetchedObjects?.count, count > 0 {
+            // Reload collection view data
+            AppManager.main.expectedPhotoAmount = count
+            collectionView.reloadData()
         } else {
-            noImagesLabel.isHidden = false
-            shouldDownloadImages = true
+            // If there are no images, then start downloading.
+            downloadImages()
         }
         
     }
@@ -169,17 +184,43 @@ extension PhotoAlbumViewController {
 extension PhotoAlbumViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return fetchedResultsController?.sections?[section].objects?.count ?? 0
+        return AppManager.main.expectedPhotoAmount
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FlickrImageCell", for: indexPath) as! TripCollectionViewCell
         
-        let photo = fetchedResultsController!.object(at: indexPath) as! Photo
-        let image = UIImage(data: photo.image!)
-        cell.imageView.image = image
+        cell.imageView.image = UIImage(named: "placeholder")
         
+        if let count = (fetchedResultsController?.fetchedObjects)?.count, count > indexPath.row {
+            
+            let photo = fetchedResultsController?.object(at: indexPath) as? Photo
+            
+            if let image = photo?.image {
+                cell.imageView.image = UIImage(data: image)
+            }
+            
+            if count == AppManager.main.expectedPhotoAmount {
+                // Enable UI
+                DispatchQueue.main.async {
+                    self.newCollectionButton.isEnabled = true
+                }
+            }
+            
+        }
+    
         return cell
+    }
+    
+}
+
+// MARK: Collection View Delegate
+
+extension PhotoAlbumViewController: UICollectionViewDelegate {
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let selectedPhoto = fetchedResultsController?.object(at: indexPath) as! Photo
+        AppManager.main.coreDataStack.context.delete(selectedPhoto)
     }
     
 }
@@ -188,12 +229,8 @@ extension PhotoAlbumViewController: UICollectionViewDataSource {
 
 extension PhotoAlbumViewController: NSFetchedResultsControllerDelegate {
     
-    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        
-    }
-    
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        
+        collectionView.reloadData()
     }
     
 }

@@ -30,9 +30,10 @@ extension Flickr {
             static let boundingBox = "bbox"
             static let extras = "extras"
             static let responseFormat = "format"
-            static let perPage = "perPage"
+            static let perPage = "per_page"
             static let noJSONCallback = "nojsoncallback"
             static let safeSearch = "safe_search"
+            static let page = "page"
         }
         
         struct ParameterValues {
@@ -41,6 +42,7 @@ extension Flickr {
             static let jsonFormat = "json"
             static let disableJSONCallback = "1"
             static let enableSafeSearch = "1"
+            static let perPage = 102
         }
         
         struct JSONResponseKeys {
@@ -48,6 +50,9 @@ extension Flickr {
             static let photos = "photos"
             static let photo = "photo"
             static let title = "title"
+            static let total = "total"
+            static let perPage = "perpage"
+            static let pages = "pages"
         }
         
     }

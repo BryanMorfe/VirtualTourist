@@ -25,6 +25,9 @@ class AppManager {
     var currentPin: Pin?
     let coreDataStack = CoreDataStack(modelName: AppManager.Constants.App.modelName)!
     
+    var expectedPhotoAmount = 0
+    var shouldUpdate = false
+            
     // MARK: Methods
     
     func configure() {

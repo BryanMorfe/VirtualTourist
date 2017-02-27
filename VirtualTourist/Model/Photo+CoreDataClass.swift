@@ -15,6 +15,7 @@ public class Photo: NSManagedObject {
     convenience init(pin: Pin, photoDictionary: [String : AnyObject], context: NSManagedObjectContext) {
         
         if let entity = NSEntityDescription.entity(forEntityName: AppManager.Constants.EntityNames.photo, in: context) {
+            
             self.init(entity: entity, insertInto: context)
             
             self.pin = pin
@@ -22,6 +23,7 @@ public class Photo: NSManagedObject {
             guard let title = photoDictionary[Flickr.Constants.JSONResponseKeys.title] as? String else {
                 fatalError("Could not retrieve the title of the photo.")
             }
+            
             self.title = title
             
             guard let imageURLString = photoDictionary[Flickr.Constants.JSONResponseKeys.mediumURL] as? String else {
@@ -39,9 +41,9 @@ public class Photo: NSManagedObject {
             } catch {
                 fatalError("Could not create data from url: \(imageURL)")
             }
-            
+
             image = imageData
-            
+
         } else {
             fatalError("Could not create entity from context.")
         }

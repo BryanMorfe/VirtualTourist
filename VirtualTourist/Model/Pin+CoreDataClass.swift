@@ -25,11 +25,4 @@ public class Pin: NSManagedObject {
         
     }
     
-    func hasPhotos() -> Bool {
-        if let photos = self.photos {
-            return photos.count > 0
-        }
-        return false
-    }
-    
 }
