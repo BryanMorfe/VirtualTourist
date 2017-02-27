@@ -10,6 +10,8 @@ import UIKit
 
 class LinedButton: UIButton {
     
+    // MARK: Properties
+    
     let defaultBorderWidth: CGFloat = 1
     let defaultCornerRadius: CGFloat = 5
     

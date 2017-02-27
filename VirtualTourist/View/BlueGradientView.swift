@@ -9,6 +9,8 @@
 import UIKit
 
 class BlueGradientView: UIView {
+    
+    // MARK: Properties
 
     var titleLabel: UILabel!
     var messageLabel: UILabel!
@@ -23,6 +25,8 @@ class BlueGradientView: UIView {
     private var isAnimatingTitle: Bool = false
     private var isAnimatingMessage: Bool = false
     
+    
+    // MARK: Initializer
     init() {
         super.init(frame: UIScreen.main.bounds)
         setup()
@@ -32,7 +36,9 @@ class BlueGradientView: UIView {
         super.init(coder: aDecoder)
     }
     
-    func setup() {
+    // MARK: Private Methods
+    
+    private func setup() {
         
         // Gradient
         let gradient = CAGradientLayer()
@@ -62,8 +68,8 @@ class BlueGradientView: UIView {
         addSubview(messageLabel)
     }
     
-    // MARK: Setters
-    /* Should add feature that allows text to be retained for certain ammount of time before it's changed */
+    // MARK: Setters Methods
+    
     func setTitle(to title: String, animated: Bool, completion handler: ((Void) -> (Void))? = nil) {
         
         if isAnimatingTitle {

@@ -79,8 +79,8 @@ class FlightInstructionsViewController: UIViewController {
         blueView.setTitle(to: "Instructions", animated: true) {
             self.blueView.animationInterval = 3
             self.blueView.setMessage(to: "To set a destination, just search for a location or manually find it on the traveling map.", animated: true) {
-                self.blueView.setMessage(to: "After you have your location, long press it to set it as a destination", animated: true) {
-                    self.blueView.setMessage(to: "One the location is set, tap on it and experience the magic.", animated: true)
+                self.blueView.setMessage(to: "After you have your location, long press it to set it as a destination.", animated: true) {
+                    self.blueView.setMessage(to: "Once the location is set, tap on it and experience the magic.", animated: true)
                 }
             }
         }

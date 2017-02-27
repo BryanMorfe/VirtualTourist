@@ -20,7 +20,21 @@
                     <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <navigationBar contentMode="scaleToFill" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MA1-Of-vgj">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="108"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="108" id="caq-Ys-U6V"/>
+                                </constraints>
+                                <color key="barTintColor" red="0.83137254901960778" green="0.2627450980392157" blue="0.19607843137254902" alpha="1" colorSpace="calibratedRGB"/>
+                            </navigationBar>
+                        </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="MA1-Of-vgj" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="Xwt-n6-lq6"/>
+                            <constraint firstItem="MA1-Of-vgj" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="rgc-A5-KuZ"/>
+                            <constraint firstAttribute="trailing" secondItem="MA1-Of-vgj" secondAttribute="trailing" id="sYp-W9-RgE"/>
+                        </constraints>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
