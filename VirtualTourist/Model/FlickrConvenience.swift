@@ -117,6 +117,7 @@ extension Flickr {
                 
                 // If we selected the last page, we have to select the remainder of 4000 to the number of pages
                 // because that's the amount of photos in the last page
+                /* THIS IS CAUSING A BUG */
                 if let pagesNumber = numberOfPages, pagesNumber == randomPage {
                     let numOfPhotos = 4000.0.truncatingRemainder(dividingBy: Double(pagesNumber))
                     AppManager.main.expectedPhotoAmount = Int(numOfPhotos)

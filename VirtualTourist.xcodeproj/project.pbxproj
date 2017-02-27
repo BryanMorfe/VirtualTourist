@@ -13,11 +13,8 @@
 		052D7E0C1E535F4200037E35 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 052D7E0A1E535F4200037E35 /* LaunchScreen.storyboard */; };
 		052D7E251E5384B100037E35 /* LinedButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052D7E241E5384B100037E35 /* LinedButton.swift */; };
 		052D7E2B1E5534DD00037E35 /* BlueGradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052D7E2A1E5534DD00037E35 /* BlueGradientView.swift */; };
-		052D7E2F1E56862A00037E35 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052D7E2E1E56862A00037E35 /* LoadingView.swift */; };
-		052D7E311E574BD400037E35 /* BlueLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052D7E301E574BD400037E35 /* BlueLoadingView.swift */; };
 		052D7E331E57C37E00037E35 /* TripCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052D7E321E57C37E00037E35 /* TripCollectionViewCell.swift */; };
 		052D7E3D1E58AC6F00037E35 /* ViewInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052D7E3C1E58AC6F00037E35 /* ViewInterface.swift */; };
-		052D7E3F1E58AC7E00037E35 /* DotLoadingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052D7E3E1E58AC7E00037E35 /* DotLoadingIndicator.swift */; };
 		052D7E411E58AC9000037E35 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052D7E401E58AC9000037E35 /* CoreDataStack.swift */; };
 		052D7E431E58AC9D00037E35 /* AppManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052D7E421E58AC9D00037E35 /* AppManager.swift */; };
 		052D7E451E58ACAA00037E35 /* AppManagerConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052D7E441E58ACAA00037E35 /* AppManagerConstants.swift */; };
@@ -43,11 +40,8 @@
 		052D7E0D1E535F4200037E35 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		052D7E241E5384B100037E35 /* LinedButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LinedButton.swift; path = View/LinedButton.swift; sourceTree = "<group>"; };
 		052D7E2A1E5534DD00037E35 /* BlueGradientView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BlueGradientView.swift; path = View/BlueGradientView.swift; sourceTree = "<group>"; };
-		052D7E2E1E56862A00037E35 /* LoadingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LoadingView.swift; path = View/LoadingView.swift; sourceTree = "<group>"; };
-		052D7E301E574BD400037E35 /* BlueLoadingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BlueLoadingView.swift; path = View/BlueLoadingView.swift; sourceTree = "<group>"; };
 		052D7E321E57C37E00037E35 /* TripCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TripCollectionViewCell.swift; path = View/TripCollectionViewCell.swift; sourceTree = "<group>"; };
 		052D7E3C1E58AC6F00037E35 /* ViewInterface.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ViewInterface.swift; path = View/ViewInterface.swift; sourceTree = "<group>"; };
-		052D7E3E1E58AC7E00037E35 /* DotLoadingIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DotLoadingIndicator.swift; path = View/DotLoadingIndicator.swift; sourceTree = "<group>"; };
 		052D7E401E58AC9000037E35 /* CoreDataStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CoreDataStack.swift; path = Model/CoreDataStack.swift; sourceTree = "<group>"; };
 		052D7E421E58AC9D00037E35 /* AppManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppManager.swift; path = Model/AppManager.swift; sourceTree = "<group>"; };
 		052D7E441E58ACAA00037E35 /* AppManagerConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppManagerConstants.swift; path = Model/AppManagerConstants.swift; sourceTree = "<group>"; };
@@ -121,9 +115,6 @@
 				052D7E3C1E58AC6F00037E35 /* ViewInterface.swift */,
 				052D7E241E5384B100037E35 /* LinedButton.swift */,
 				052D7E2A1E5534DD00037E35 /* BlueGradientView.swift */,
-				052D7E3E1E58AC7E00037E35 /* DotLoadingIndicator.swift */,
-				052D7E2E1E56862A00037E35 /* LoadingView.swift */,
-				052D7E301E574BD400037E35 /* BlueLoadingView.swift */,
 				052D7E321E57C37E00037E35 /* TripCollectionViewCell.swift */,
 			);
 			name = View;
@@ -263,7 +254,6 @@
 			files = (
 				052D7E541E58AD8100037E35 /* VirtualTouristModel.xcdatamodeld in Sources */,
 				052D7E4A1E58ACC700037E35 /* FlickrConvenience.swift in Sources */,
-				052D7E311E574BD400037E35 /* BlueLoadingView.swift in Sources */,
 				052D7E501E58ACD700037E35 /* PhotoAlbumViewController.swift in Sources */,
 				052D7E3D1E58AC6F00037E35 /* ViewInterface.swift in Sources */,
 				052D7E2B1E5534DD00037E35 /* BlueGradientView.swift in Sources */,
@@ -272,7 +262,6 @@
 				052D7E641E58B82700037E35 /* Photo+CoreDataProperties.swift in Sources */,
 				052D7E411E58AC9000037E35 /* CoreDataStack.swift in Sources */,
 				052D7E611E58B82700037E35 /* Pin+CoreDataClass.swift in Sources */,
-				052D7E3F1E58AC7E00037E35 /* DotLoadingIndicator.swift in Sources */,
 				052D7E451E58ACAA00037E35 /* AppManagerConstants.swift in Sources */,
 				052D7E331E57C37E00037E35 /* TripCollectionViewCell.swift in Sources */,
 				052D7E621E58B82700037E35 /* Pin+CoreDataProperties.swift in Sources */,
@@ -281,7 +270,6 @@
 				052D7E431E58AC9D00037E35 /* AppManager.swift in Sources */,
 				052D7E4B1E58ACC700037E35 /* FlickrConstants.swift in Sources */,
 				052D7E021E535F4200037E35 /* AppDelegate.swift in Sources */,
-				052D7E2F1E56862A00037E35 /* LoadingView.swift in Sources */,
 				052D7E511E58ACD700037E35 /* FlightInstructionsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
