@@ -112,14 +112,18 @@ extension Flickr {
                 }
                 
                 // Get the amount of photos that are in the current page
-                let total = Int(photosDictionary[Constants.JSONResponseKeys.total] as! String)!
+                var total = Int(photosDictionary[Constants.JSONResponseKeys.total] as! String)!
                 let perPage = Constants.ParameterValues.perPage
                 
                 // If we selected the last page, we have to select the remainder of 4000 to the number of pages
                 // because that's the amount of photos in the last page
                 /* THIS IS CAUSING A BUG */
                 if let pagesNumber = numberOfPages, pagesNumber == randomPage {
-                    let numOfPhotos = 4000.0.truncatingRemainder(dividingBy: Double(pagesNumber))
+                    total = min(total, 4000)
+                    let numOfPhotos = Double(total).truncatingRemainder(dividingBy: Double(perPage)) > 0 ? Double(total).truncatingRemainder(dividingBy: Double(perPage)) : Double(total)
+                    print(total)
+                    print(pagesNumber)
+                    print(numOfPhotos)
                     AppManager.main.expectedPhotoAmount = Int(numOfPhotos)
                 } else {
                     // Otherwise, check if there are less photos than the amount per page and assign it
