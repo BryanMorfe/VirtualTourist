@@ -16,11 +16,16 @@ class TravelMapViewController: UIViewController {
     
     var annotations = [MKAnnotation]()
     
+    var tapGestureRecognizer: UIGestureRecognizer!
+    
     @IBOutlet weak var travelMap: MKMapView!
+    
+    @IBOutlet weak var searchBar: UISearchBar!
         
     override func viewDidLoad() {
         super.viewDidLoad()
         configureMap()
+        tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissSearchBar))
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -137,6 +142,19 @@ extension TravelMapViewController {
         AppManager.main.mapState = mapStateDictionary as [String : AnyObject]
     }
     
+    func dismissSearchBar(_ tapGesture: UITapGestureRecognizer) {
+        
+        if tapGesture.state == .recognized {
+            
+            if searchBar.isFirstResponder {
+                searchBar.resignFirstResponder()
+            }
+            
+            travelMap.removeGestureRecognizer(tapGestureRecognizer)
+        }
+        
+    }
+    
 }
 
 
@@ -191,4 +209,44 @@ extension TravelMapViewController: MKMapViewDelegate {
         updateMapState()
     }
 
+}
+
+// MARK: Search Bar Delegate
+
+extension TravelMapViewController: UISearchBarDelegate {
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        
+        guard let text = searchBar.text else {
+            return
+        }
+        
+        CLGeocoder().geocodeAddressString(text) { (placemarks, error) in
+            
+            guard error == nil else {
+                return
+            }
+            
+            guard let placemarks = placemarks else {
+                return
+            }
+            
+            let placemark = placemarks[0]
+            let coordinate = placemark.location!.coordinate
+            let span = MKCoordinateSpanMake(0.3, 0.3)
+            let region = MKCoordinateRegionMake(coordinate, span)
+            
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+                self.travelMap.setRegion(region, animated: true)
+            }
+            
+        }
+        
+    }
+    
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        travelMap.addGestureRecognizer(tapGestureRecognizer)
+    }
+    
 }

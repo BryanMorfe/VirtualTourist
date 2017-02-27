@@ -41,13 +41,23 @@
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="WGS-Yx-VIp">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                             </mapView>
+                            <searchBar contentMode="redraw" placeholder="Search for a place" translatesAutoresizingMaskIntoConstraints="NO" id="cEC-HS-9EW">
+                                <rect key="frame" x="0.0" y="64" width="375" height="44"/>
+                                <textInputTraits key="textInputTraits"/>
+                                <connections>
+                                    <outlet property="delegate" destination="BYZ-38-t0r" id="SqV-y9-DpI"/>
+                                </connections>
+                            </searchBar>
                         </subviews>
                         <color key="backgroundColor" red="1" green="0.99999988080000002" blue="0.99999141690000004" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                         <constraints>
+                            <constraint firstItem="cEC-HS-9EW" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="1Ai-cw-H9e"/>
+                            <constraint firstAttribute="trailing" secondItem="cEC-HS-9EW" secondAttribute="trailing" id="VDe-uk-stp"/>
                             <constraint firstItem="WGS-Yx-VIp" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="VmE-Qf-Umq"/>
                             <constraint firstItem="WGS-Yx-VIp" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="XwJ-f1-1EV"/>
                             <constraint firstItem="WGS-Yx-VIp" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" id="dYm-fG-tQ3"/>
                             <constraint firstItem="WGS-Yx-VIp" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="haO-4Q-1Va"/>
+                            <constraint firstItem="cEC-HS-9EW" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="ncC-hm-HMb"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Travel Map" id="um8-Sb-v9K">
@@ -59,6 +69,7 @@
                     </navigationItem>
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
                     <connections>
+                        <outlet property="searchBar" destination="cEC-HS-9EW" id="U5C-SL-sOD"/>
                         <outlet property="travelMap" destination="WGS-Yx-VIp" id="aht-Xn-wmj"/>
                     </connections>
                 </viewController>

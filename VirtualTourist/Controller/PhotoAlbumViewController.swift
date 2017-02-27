@@ -34,6 +34,8 @@ class PhotoAlbumViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        NotificationCenter.default.addObserver(self, selector: #selector(updateViewsFrames), name: .UIDeviceOrientationDidChange, object: nil)
+        
         DispatchQueue.main.async {
             self.startFetch()
         }
@@ -43,6 +45,7 @@ class PhotoAlbumViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         AppManager.main.expectedPhotoAmount = 0
+        NotificationCenter.default.removeObserver(self, name: .UIDeviceOrientationDidChange, object: nil)
     }
     
     @IBAction func getNewCollection() {
@@ -83,7 +86,9 @@ extension PhotoAlbumViewController {
                 
                 // If there are no images fetched, then show the no images label
                 if AppManager.main.expectedPhotoAmount == 0 {
-                    self.noImagesLabel.isHidden = false
+                    DispatchQueue.main.async {
+                        self.noImagesLabel.isHidden = false
+                    }
                 }
                 
             } else {
@@ -115,15 +120,6 @@ extension PhotoAlbumViewController {
         collectionView.dataSource = self
         collectionView.delegate = self
         
-        // Cell Layout
-        let desiredAmountOfItemsPerRow: CGFloat = 3
-        let spacing: CGFloat = 3 / 2
-        let totalAvailableWidth = view.frame.width - 6
-        let dimensions = (totalAvailableWidth / desiredAmountOfItemsPerRow) - ((desiredAmountOfItemsPerRow - 1) * spacing)
-        collectionViewFlowLayout.itemSize = CGSize(width: dimensions, height: dimensions)
-        collectionViewFlowLayout.minimumInteritemSpacing = spacing
-        collectionViewFlowLayout.minimumLineSpacing = spacing * 2
-        
         /* No images label */
         
         noImagesLabel = UILabel()
@@ -131,8 +127,11 @@ extension PhotoAlbumViewController {
         noImagesLabel.font = UIFont(name: ".SFUIText-Bold", size: 18)
         noImagesLabel.textColor = .lightGray
         noImagesLabel.textAlignment = .center
-        noImagesLabel.frame = CGRect(x: collectionView.frame.size.width * 0.10, y: (collectionView.frame.size.height / 2) - 22 - 22, width: collectionView.frame.size.width * 0.80, height: 44)
         noImagesLabel.isHidden = true
+        
+        /* Update the frames of the collection view and noImagesLabel */
+        updateViewsFrames()
+        
         collectionView.addSubview(noImagesLabel)
         
     }
@@ -149,7 +148,7 @@ extension PhotoAlbumViewController {
     
     func startFetch() {
             
-        // Create request
+        // Create and configure request
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: AppManager.Constants.EntityNames.photo)
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
             
@@ -175,6 +174,22 @@ extension PhotoAlbumViewController {
             downloadImages()
         }
         
+    }
+    
+    func updateViewsFrames() {
+        
+        /* Collection View */
+
+        let desiredAmountOfItemsPerRow: CGFloat = 3
+        let spacing: CGFloat = 3 / 2
+        let totalAvailableWidth = view.frame.width - 6
+        let dimensions = (totalAvailableWidth / desiredAmountOfItemsPerRow) - ((desiredAmountOfItemsPerRow - 1) * spacing)
+        collectionViewFlowLayout.itemSize = CGSize(width: dimensions, height: dimensions)
+        collectionViewFlowLayout.minimumInteritemSpacing = spacing
+        collectionViewFlowLayout.minimumLineSpacing = spacing * 2
+        
+        /* No Images Label */
+        noImagesLabel.frame = CGRect(x: collectionView.frame.size.width * 0.10, y: (collectionView.frame.size.height / 2) - 22, width: collectionView.frame.size.width * 0.80, height: 44)
     }
     
 }
@@ -221,6 +236,7 @@ extension PhotoAlbumViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let selectedPhoto = fetchedResultsController?.object(at: indexPath) as! Photo
         AppManager.main.coreDataStack.context.delete(selectedPhoto)
+        AppManager.main.expectedPhotoAmount -= 1
     }
     
 }

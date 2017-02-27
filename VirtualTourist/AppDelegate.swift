@@ -86,6 +86,12 @@ extension AppDelegate {
         toolbarAppearance.setShadowImage(UIImage(), forToolbarPosition: .any)
         toolbarAppearance.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
         
+        // Search Bar
+        let searchBarAppearance = UISearchBar.appearance()
+        searchBarAppearance.barTintColor = ViewInterface.Constants.Colors.softRed
+        searchBarAppearance.setBackgroundImage(UIImage(), for: .any, barMetrics: .default)
+        searchBarAppearance.isTranslucent = false
+        
         // Status Bar
         UIApplication.shared.statusBarStyle = .lightContent
         

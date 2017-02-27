@@ -57,80 +57,76 @@ extension Flickr {
     
     func getImages(from latitude: Double, longitude: Double, completion handler: @escaping (Bool, String?) -> Void) {
         
-        getNumberOfPages(from: latitude, longitude: longitude) { (numberOfPages, errorString) in
+        getNumberOfPages(from: latitude, longitude: longitude) {
             
-            if numberOfPages != nil {
+            (numberOfPages, errorString) in
+            
+            
+            let randomPage = arc4random_uniform(UInt32(numberOfPages ?? 0)) + 1
                 
-                let randomPage = arc4random_uniform(UInt32(numberOfPages!)) + 1
+            let parameters = [
+                Constants.ParameterKeys.method : Constants.Methods.searchMethod as AnyObject,
+                Constants.ParameterKeys.safeSearch : Constants.ParameterValues.enableSafeSearch as AnyObject,
+                Constants.ParameterKeys.extras : Constants.ParameterValues.mediumURL as AnyObject,
+                Constants.ParameterKeys.noJSONCallback : Constants.ParameterValues.disableJSONCallback as AnyObject,
+                Constants.ParameterKeys.responseFormat : Constants.ParameterValues.jsonFormat as AnyObject,
+                Constants.ParameterKeys.perPage : Constants.ParameterValues.perPage as AnyObject,
+                Constants.ParameterKeys.boundingBox : self.makeBoundingBox(from: latitude, longitude: longitude) as AnyObject,
+                Constants.ParameterKeys.page : randomPage as AnyObject
+            ] as [String : AnyObject]
                 
-                let parameters = [
-                    Constants.ParameterKeys.method : Constants.Methods.searchMethod as AnyObject,
-                    Constants.ParameterKeys.safeSearch : Constants.ParameterValues.enableSafeSearch as AnyObject,
-                    Constants.ParameterKeys.extras : Constants.ParameterValues.mediumURL as AnyObject,
-                    Constants.ParameterKeys.noJSONCallback : Constants.ParameterValues.disableJSONCallback as AnyObject,
-                    Constants.ParameterKeys.responseFormat : Constants.ParameterValues.jsonFormat as AnyObject,
-                    Constants.ParameterKeys.perPage : Constants.ParameterValues.perPage as AnyObject,
-                    Constants.ParameterKeys.boundingBox : self.makeBoundingBox(from: latitude, longitude: longitude) as AnyObject,
-                    Constants.ParameterKeys.page : randomPage as AnyObject
-                    ] as [String : AnyObject]
+            self.taskForGet(with: parameters) {
+                (data, error) in
                 
-                self.taskForGet(with: parameters) {
-                    (data, error) in
-                    
-                    guard error == nil else {
-                        handler(false, "Error: \(error!.localizedDescription)")
-                        return
-                    }
-                    
-                    guard let data = data else {
-                        handler(false, "Error while retrieving the data.")
-                        return
-                    }
-                    
-                    guard let photosDictionary = data[Constants.JSONResponseKeys.photos] as? [String : AnyObject] else {
-                        handler(false, "Error retrieving photos dictionary.")
-                        return
-                    }
-                    
-                    guard let photosArray = photosDictionary[Constants.JSONResponseKeys.photo] as? [[String : AnyObject]] else {
-                        handler(false, "Error accessing array of photos.")
-                        return
-                    }
-                    
-                    let total = Int(photosDictionary[Constants.JSONResponseKeys.total] as! String)!
-                    let perPage = Constants.ParameterValues.perPage
-                    AppManager.main.expectedPhotoAmount = total < perPage ? total : perPage
-                    
-                    var pin = AppManager.main.currentPin!
-                    
-                    // If the current pin
-                    if pin.managedObjectContext! !== AppManager.main.coreDataStack.backgroundContext {
-                        pin = AppManager.main.coreDataStack.backgroundContext.object(with: pin.objectID) as! Pin
-                        AppManager.main.currentPin = pin
-                    }
-                    
-                    for photoDictionary in photosArray {
-                        AppManager.main.coreDataStack.performBackgroundBatchOperations(batch: { (backgroundContext) in
-                            // The instance of Photo is added to the context automatically at initialization
-                            // Because Pin and Photo have an inverse relationship, if I assign a Pin to a Photo object, the Photo object
-                            // is automatically added to the Pin's set of photos
-                            let _ = Photo(pin: pin, photoDictionary: photoDictionary, context: backgroundContext)
-                        })
-                    }
-                    
-                    AppManager.main.pins.append(pin)
-                    
-                    handler(true, nil)
-                    
+                guard error == nil else {
+                    handler(false, "Error: \(error!.localizedDescription)")
+                    return
                 }
                 
-            } else {
+                guard let data = data else {
+                    handler(false, "Error while retrieving the data.")
+                    return
+                }
+                    
+                guard let photosDictionary = data[Constants.JSONResponseKeys.photos] as? [String : AnyObject] else {
+                    handler(false, "Error retrieving photos dictionary.")
+                    return
+                }
+                    
+                guard let photosArray = photosDictionary[Constants.JSONResponseKeys.photo] as? [[String : AnyObject]] else {
+                    handler(false, "Error accessing array of photos.")
+                    return
+                }
+                    
+                let total = Int(photosDictionary[Constants.JSONResponseKeys.total] as! String)!
+                let perPage = Constants.ParameterValues.perPage
+                AppManager.main.expectedPhotoAmount = total < perPage ? total : perPage
+                    
+                var pin = AppManager.main.currentPin!
                 
-                handler(false, errorString)
-                
+                // If the current pin
+                if pin.managedObjectContext! !== AppManager.main.coreDataStack.backgroundContext {
+                    pin = AppManager.main.coreDataStack.backgroundContext.object(with: pin.objectID) as! Pin
+                    AppManager.main.currentPin = pin
+                }
+                    
+                for photoDictionary in photosArray {
+                    AppManager.main.coreDataStack.performBackgroundBatchOperations(batch: { (backgroundContext) in
+                        // The instance of Photo is added to the context automatically at initialization
+                        // Because Pin and Photo have an inverse relationship, if I assign a Pin to a Photo object, the Photo object
+                        // is automatically added to the Pin's set of photos
+                        let _ = Photo(pin: pin, photoDictionary: photoDictionary, context: backgroundContext)
+                    })
+                }
+                    
+                AppManager.main.pins.append(pin)
+                    
+                handler(true, nil)
+                    
             }
             
         }
+
     }
     
     func makeURL(from parameters: [String : AnyObject]) -> URL? {
