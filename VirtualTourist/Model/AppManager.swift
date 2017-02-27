@@ -7,6 +7,7 @@
 //
 //  The app manager contains relevant properties and operations to the app
 //  including the state of the map, all loaded pins, current working pin, etc.
+//  and manages the Core Data stack
 
 import Foundation
 
@@ -26,8 +27,7 @@ class AppManager {
     let coreDataStack = CoreDataStack(modelName: AppManager.Constants.App.modelName)!
     
     var expectedPhotoAmount = 0
-    var shouldUpdate = false
-            
+    
     // MARK: Methods
     
     func configure() {
@@ -58,6 +58,8 @@ class AppManager {
     }
     
     func getPin(with latitude: Double, longitude: Double) -> Pin? {
+        
+        // Tries to find a loaded pin with the specified coordinates
         
         for pin in pins {
             if pin.latitude == latitude && pin.longitude == longitude {

@@ -14,6 +14,9 @@ extension Flickr {
     
     private func getNumberOfPages(from latitude: Double, longitude: Double, completion handler: @escaping (Int?, String?) -> Void) {
         
+        // This method gets the maximum allowed number of pages.
+        
+        // Setup Parameters
         let parameters = [
             Constants.ParameterKeys.method : Constants.Methods.searchMethod as AnyObject,
             Constants.ParameterKeys.safeSearch : Constants.ParameterValues.enableSafeSearch as AnyObject,
@@ -24,9 +27,11 @@ extension Flickr {
             Constants.ParameterKeys.boundingBox : makeBoundingBox(from: latitude, longitude: longitude) as AnyObject
             ] as [String : AnyObject]
         
+        // Start GET Request
         taskForGet(with: parameters) {
             (data, error) in
             
+            // Error handling
             guard error == nil else {
                 handler(nil, "Error: \(error!.localizedDescription)")
                 return
@@ -37,6 +42,7 @@ extension Flickr {
                 return
             }
             
+            // Data parsing
             guard let photosDictionary = data[Constants.JSONResponseKeys.photos] as? [String : AnyObject] else {
                 handler(nil, "Error retrieving photos dictionary.")
                 return
@@ -47,6 +53,7 @@ extension Flickr {
                 return
             }
             
+            // Get me the number of pages if is less than the the page containing the 4000th image.
             let maximumPageNumber = min(numberOfPages, Int(ceil(4000 / Double(numberOfPages))))
                 
             handler(maximumPageNumber, nil)
@@ -57,13 +64,16 @@ extension Flickr {
     
     func getImages(from latitude: Double, longitude: Double, completion handler: @escaping (Bool, String?) -> Void) {
         
+        // This method downloads the data from Flickr and creates the Managed Objects in Background
+        
+        // Get number of pages.
         getNumberOfPages(from: latitude, longitude: longitude) {
-            
             (numberOfPages, errorString) in
             
+            // Try to find a page, if any, else just choose page 1.
+            let randomPage = Int(arc4random_uniform(UInt32(numberOfPages ?? 0)) + 1)
             
-            let randomPage = arc4random_uniform(UInt32(numberOfPages ?? 0)) + 1
-                
+            // Setup parameters
             let parameters = [
                 Constants.ParameterKeys.method : Constants.Methods.searchMethod as AnyObject,
                 Constants.ParameterKeys.safeSearch : Constants.ParameterValues.enableSafeSearch as AnyObject,
@@ -74,10 +84,12 @@ extension Flickr {
                 Constants.ParameterKeys.boundingBox : self.makeBoundingBox(from: latitude, longitude: longitude) as AnyObject,
                 Constants.ParameterKeys.page : randomPage as AnyObject
             ] as [String : AnyObject]
-                
+            
+            // Start GET Task
             self.taskForGet(with: parameters) {
                 (data, error) in
                 
+                // Error handling
                 guard error == nil else {
                     handler(false, "Error: \(error!.localizedDescription)")
                     return
@@ -87,7 +99,8 @@ extension Flickr {
                     handler(false, "Error while retrieving the data.")
                     return
                 }
-                    
+                
+                // Data parsing
                 guard let photosDictionary = data[Constants.JSONResponseKeys.photos] as? [String : AnyObject] else {
                     handler(false, "Error retrieving photos dictionary.")
                     return
@@ -97,14 +110,28 @@ extension Flickr {
                     handler(false, "Error accessing array of photos.")
                     return
                 }
-                    
+                
+                // Get the amount of photos that are in the current page
                 let total = Int(photosDictionary[Constants.JSONResponseKeys.total] as! String)!
                 let perPage = Constants.ParameterValues.perPage
-                AppManager.main.expectedPhotoAmount = total < perPage ? total : perPage
-                    
+                
+                // If we selected the last page, we have to select the remainder of 4000 to the number of pages
+                // because that's the amount of photos in the last page
+                if let pagesNumber = numberOfPages, pagesNumber == randomPage {
+                    let numOfPhotos = 4000.0.truncatingRemainder(dividingBy: Double(pagesNumber))
+                    AppManager.main.expectedPhotoAmount = Int(numOfPhotos)
+                } else {
+                    // Otherwise, check if there are less photos than the amount per page and assign it
+                    AppManager.main.expectedPhotoAmount = min(total, perPage)
+                }
+                
+                // Create a reference to the current Pin (current Pin is set when is tapped on in TravelMapViewController)
                 var pin = AppManager.main.currentPin!
                 
-                // If the current pin
+                // If the current pin is not in the background context (It existed before and it was loaded into main context
+                // We have to find the same Pin Managed Object that is in the background context.
+                // We know that if we have Managed Objects trying to set relationship while in different queues, it will cause
+                // the app to crash.
                 if pin.managedObjectContext! !== AppManager.main.coreDataStack.backgroundContext {
                     pin = AppManager.main.coreDataStack.backgroundContext.object(with: pin.objectID) as! Pin
                     AppManager.main.currentPin = pin
@@ -115,12 +142,16 @@ extension Flickr {
                         // The instance of Photo is added to the context automatically at initialization
                         // Because Pin and Photo have an inverse relationship, if I assign a Pin to a Photo object, the Photo object
                         // is automatically added to the Pin's set of photos
+                        // so there is no need to add the photos to the Pin managed object
                         let _ = Photo(pin: pin, photoDictionary: photoDictionary, context: backgroundContext)
                     })
                 }
-                    
-                AppManager.main.pins.append(pin)
-                    
+                
+                // If this pin is not in all loaded pins because it's new, then add it
+                if !AppManager.main.pins.contains(pin) {
+                    AppManager.main.pins.append(pin)
+                }
+                
                 handler(true, nil)
                     
             }
@@ -130,6 +161,8 @@ extension Flickr {
     }
     
     func makeURL(from parameters: [String : AnyObject]) -> URL? {
+    
+        // Builds a url from the passed parameters
         
         var components = URLComponents()
         components.scheme = Flickr.Constants.URL.scheme
@@ -149,6 +182,8 @@ extension Flickr {
     }
     
     func convert(data: Data, completion handler: @escaping (AnyObject?, NSError?) -> Void) {
+     
+        // Attemps to convert data to JSON Obj or returns nil with an error
         
         let parsedData: AnyObject!
         
@@ -164,8 +199,10 @@ extension Flickr {
         handler(parsedData, nil)
         
     }
-    
+
     private func makeBoundingBox(from latitude: Double, longitude: Double) -> String {
+        
+        // Creates a bounding box for Flickr parameter
         
         let difference: Double = 1
         

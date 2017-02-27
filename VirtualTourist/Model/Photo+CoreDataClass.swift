@@ -11,6 +11,8 @@ import CoreData
 
 @objc(Photo)
 public class Photo: NSManagedObject {
+    
+    // MARK: Initializer
 
     convenience init(pin: Pin, photoDictionary: [String : AnyObject], context: NSManagedObjectContext) {
         

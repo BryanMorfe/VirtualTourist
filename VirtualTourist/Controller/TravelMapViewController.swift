@@ -12,16 +12,17 @@ import CoreData
 
 class TravelMapViewController: UIViewController {
     
+    // MARK: Properties
+    
     var fetchedRequestController: NSFetchedResultsController<NSFetchRequestResult>?
-    
     var annotations = [MKAnnotation]()
-    
     var tapGestureRecognizer: UIGestureRecognizer!
     
     @IBOutlet weak var travelMap: MKMapView!
-    
     @IBOutlet weak var searchBar: UISearchBar!
-        
+    
+    // MARK: Methods
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureMap()
@@ -36,20 +37,20 @@ class TravelMapViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
+        // For first launches
         if AppManager.main.isFirstLaunch == true {
-            AppManager.main.isFirstLaunch = false
-            if UIDevice.current.orientation != .portrait {
-                UIDevice.current.setValue(UIDeviceOrientation.portrait.rawValue, forKey: "orientation")
-            }
-            let controller = FlightInstructionsViewController()
-            present(controller, animated: true, completion: nil)
+            // Because the instructions/welcome screen are in portrait, make it portrait before presenting it.
+            showInstructions() // The intructions view controller presents the welcome screen for first timers.
         }
     }
     
     @IBAction func showInstructions() {
+        
+        // Because the instructions are in portrait, make it portrait before presenting it.
         if UIDevice.current.orientation != .portrait {
             UIDevice.current.setValue(UIDeviceOrientation.portrait.rawValue, forKey: "orientation")
         }
+        
         let controller = FlightInstructionsViewController()
         present(controller, animated: true, completion: nil)
     }
@@ -78,11 +79,16 @@ class TravelMapViewController: UIViewController {
             travelMap.setRegion(region, animated: false)
             
         }
+        
     }
     
     func dropPin(gestureRecognizer: UILongPressGestureRecognizer) {
         
+        // Manages the tap and hold gesture.
+        
         if gestureRecognizer.state == .began {
+            
+            // Converts the touch point into coordinates and creates an annotation for the map
             let touchLocation = gestureRecognizer.location(in: travelMap)
             let touchCoordinate = travelMap.convert(touchLocation, toCoordinateFrom: travelMap)
             let annotation = MKPointAnnotation()
@@ -101,9 +107,13 @@ extension TravelMapViewController {
     
     func loadPins() {
         
+        /* This method loads all the pins from core data */
+        
+        // First remove the ones in annotations so there are no duplicates
         travelMap.removeAnnotations(annotations)
         annotations = []
         
+        // Fetch all Pins
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: AppManager.Constants.EntityNames.pin)
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "latitude", ascending: true)]
         
@@ -115,6 +125,7 @@ extension TravelMapViewController {
             print("Cannot perform search.")
         }
         
+        // Create an annotation for all pins
         if let pins = fetchedRequestController?.fetchedObjects as? [Pin], pins.count > 0 {
             
             for pin in pins {
@@ -132,6 +143,9 @@ extension TravelMapViewController {
     }
     
     func updateMapState() {
+        
+        // Tells the app manager of the new Map state
+        
         let mapStateDictionary = [
             AppManager.Constants.MapState.latitudeDelta : travelMap.region.span.latitudeDelta,
             AppManager.Constants.MapState.longitudeDelta : travelMap.region.span.longitudeDelta,
@@ -144,6 +158,7 @@ extension TravelMapViewController {
     
     func dismissSearchBar(_ tapGesture: UITapGestureRecognizer) {
         
+        // Stops search bar editing when map is tapped and is searching
         if tapGesture.state == .recognized {
             
             if searchBar.isFirstResponder {
@@ -170,6 +185,8 @@ extension TravelMapViewController: MKMapViewDelegate {
             pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseIdentifier)
         }
         
+        // Adds the nice drop animation for the pin
+        // safe to unwrap because it was created if did not exist
         pinView!.animatesDrop = true
         
         return pinView
@@ -178,6 +195,8 @@ extension TravelMapViewController: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         
         // Manage view clicking
+        
+        // Create a instance of the PhotoAlbumView with storyboard instatiation
         let photoAlbumController = storyboard?.instantiateViewController(withIdentifier: "PhotoAlbumViewController") as! PhotoAlbumViewController
         photoAlbumController.mapAnnotation = view.annotation as! MKPointAnnotation
         
@@ -188,6 +207,8 @@ extension TravelMapViewController: MKMapViewDelegate {
         if let pin = AppManager.main.getPin(with: coordinate.latitude, longitude: coordinate.longitude) {
             AppManager.main.currentPin = pin
         } else {
+            // Because the Photo Managed Object in created in the background context, we need to make sure that this Pin is also in the
+            // background context. Also, that assures the UI does not get blocked from loading things.
             AppManager.main.coreDataStack.performBackgroundBatchOperations {
                 backgroundContext in
                 AppManager.main.currentPin = Pin(latitude: coordinate.latitude, longitude: coordinate.longitude, context: backgroundContext)
@@ -198,14 +219,8 @@ extension TravelMapViewController: MKMapViewDelegate {
         navigationController!.pushViewController(photoAlbumController, animated: true)
     }
     
-    func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
-        
-    }
-    
     func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
-        UIView.animate(withDuration: 0.3) {
-            self.navigationController!.navigationBar.alpha = 1
-        }
+        // Update the app manager with latest map state
         updateMapState()
     }
 
@@ -217,26 +232,33 @@ extension TravelMapViewController: UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         
-        guard let text = searchBar.text else {
+        // Make sure there is text to search
+        guard let text = searchBar.text, !text.isEmpty else {
+            print("No text could be retrieved")
             return
         }
         
+        // Geocode string
         CLGeocoder().geocodeAddressString(text) { (placemarks, error) in
             
             guard error == nil else {
+                print("Unable to geocode \(text).")
                 return
             }
             
             guard let placemarks = placemarks else {
+                print("Unable to retrieve placemarks.")
                 return
             }
             
+            // Do some magic by going to the region
             let placemark = placemarks[0]
             let coordinate = placemark.location!.coordinate
             let span = MKCoordinateSpanMake(0.3, 0.3)
             let region = MKCoordinateRegionMake(coordinate, span)
             
             DispatchQueue.main.async {
+                // Dismiss search bar and set the map region
                 searchBar.resignFirstResponder()
                 self.travelMap.setRegion(region, animated: true)
             }
@@ -246,6 +268,8 @@ extension TravelMapViewController: UISearchBarDelegate {
     }
     
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        // When the search bar is being edited, add the tap gesture to the map,
+        // This gesture is removed when performed, that way is only there when editing search bar
         travelMap.addGestureRecognizer(tapGestureRecognizer)
     }
     

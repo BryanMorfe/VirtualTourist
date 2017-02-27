@@ -10,6 +10,8 @@ import UIKit
 
 class FlightInstructionsViewController: UIViewController {
     
+    // MARK: Properties
+    
     var finishButton: LinedButton!
     var blueView: BlueGradientView!
     
@@ -21,6 +23,8 @@ class FlightInstructionsViewController: UIViewController {
         return false
     }
 
+    // MARK: Methods
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
@@ -29,6 +33,7 @@ class FlightInstructionsViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if AppManager.main.isFirstLaunch == true {
+            AppManager.main.isFirstLaunch = false
             performWelcomeAnimation {
                 self.performInstructionsAnimation()
             }
@@ -54,6 +59,8 @@ class FlightInstructionsViewController: UIViewController {
     
     func performWelcomeAnimation(completion handler: @escaping (Void) -> Void) {
         
+        // Takes advantages of the BlueGradientView to animate a welcome screen for new users
+        
         finishButton.isEnabled = false
         
         blueView.setTitle(to: "Welcome to VirtualTourist", animated: true) {
@@ -66,11 +73,14 @@ class FlightInstructionsViewController: UIViewController {
     }
     
     func performInstructionsAnimation() {
+        
+        // Displays the instructions in an animated manner to users
+        
         blueView.setTitle(to: "Instructions", animated: true) {
             self.blueView.animationInterval = 3
-            self.blueView.setMessage(to: "To set a destination, just long press a location in the traveling map and see it marked.", animated: true) {
-                self.blueView.setMessage(to: "One the location is set, tap on it and experience the magic.", animated: true) {
-                    self.blueView.setMessage(to: "Note that you can set multiple destinations.", animated: true)
+            self.blueView.setMessage(to: "To set a destination, just search for a location or manually find it on the traveling map.", animated: true) {
+                self.blueView.setMessage(to: "After you have your location, long press it to set it as a destination", animated: true) {
+                    self.blueView.setMessage(to: "One the location is set, tap on it and experience the magic.", animated: true)
                 }
             }
         }
@@ -79,7 +89,5 @@ class FlightInstructionsViewController: UIViewController {
     func finish() {
         dismiss(animated: true, completion: nil)
     }
-    
-    
 
 }

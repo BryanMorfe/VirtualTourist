@@ -13,8 +13,9 @@ class Flickr {
     // MARK: Properties
     
     static let shared = Flickr()
-    
     var session = URLSession.shared
+    
+    // MARK: Methods
     
     func taskForGet(with parameters: [String : AnyObject], completion handler: @escaping (AnyObject?, NSError?) -> Void) {
         
@@ -54,6 +55,7 @@ class Flickr {
                 return
             }
             
+            // Convert fetched data
             self.convert(data: data, completion: handler)
             
         }

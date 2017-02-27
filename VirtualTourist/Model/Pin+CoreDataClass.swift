@@ -12,6 +12,8 @@ import CoreData
 @objc(Pin)
 public class Pin: NSManagedObject {
     
+    // MARK: Initializer
+    
     convenience init(latitude: Double, longitude: Double, context: NSManagedObjectContext) {
         
         if let entity = NSEntityDescription.entity(forEntityName: AppManager.Constants.EntityNames.pin, in: context) {
@@ -25,4 +27,10 @@ public class Pin: NSManagedObject {
         
     }
     
+}
+
+extension Pin {
+    static func ==(lhs: Pin, rhs: Pin) -> Bool {
+        return lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
+    }
 }

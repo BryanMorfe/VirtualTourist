@@ -10,6 +10,8 @@ import UIKit
 
 class TripCollectionViewCell: UICollectionViewCell {
     
+    // MARK: Properties
+    
     @IBOutlet weak var imageView: UIImageView!
     
 }

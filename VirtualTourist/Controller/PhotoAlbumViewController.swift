@@ -12,12 +12,10 @@ import CoreData
 
 class PhotoAlbumViewController: UIViewController {
     
+    // MARK: Properties
+    
     var fetchedResultsController: NSFetchedResultsController<NSFetchRequestResult>?
-    
     var mapAnnotation: MKPointAnnotation!
-    
-    var shouldDownloadImages: Bool = true
-    
     var noImagesLabel: UILabel!
     
     @IBOutlet weak var tripMap: MKMapView!
@@ -25,6 +23,8 @@ class PhotoAlbumViewController: UIViewController {
     
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var collectionViewFlowLayout: UICollectionViewFlowLayout!
+    
+    // MARK: Methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,8 +34,12 @@ class PhotoAlbumViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        // Add orientation change notification
         NotificationCenter.default.addObserver(self, selector: #selector(updateViewsFrames), name: .UIDeviceOrientationDidChange, object: nil)
         
+        // Start fetching asynchronously
+        // If it's done synchronously, when an existing pin is tapped, and is fetching all managed object photos,
+        // the UI will be bloked for a brief second or two.
         DispatchQueue.main.async {
             self.startFetch()
         }
@@ -44,11 +48,20 @@ class PhotoAlbumViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        
+        // Set the number of expected photos to zero
+        // If we leave it as is, when an existing pin is tapped,
+        // it will deque the same amount of cell that there were photos in previous fetch === might show + or - placeholders
+        // than there actually are for a few seconds before the real expect amount is calculated.
         AppManager.main.expectedPhotoAmount = 0
+        
+        // Unsubscribe to orientation change
         NotificationCenter.default.removeObserver(self, name: .UIDeviceOrientationDidChange, object: nil)
     }
     
     @IBAction func getNewCollection() {
+        
+        // Requests a new random collection of photos from the Flickr server
         
         // Delete all photos if any
         if let photos = fetchedResultsController?.fetchedObjects as? [Photo] {
@@ -58,8 +71,6 @@ class PhotoAlbumViewController: UIViewController {
         }
         
         // Download new photos
-        
-        // Need to fix it because these photos are created in background context and the pins are in main context
         downloadImages()
     }
     
@@ -71,19 +82,23 @@ extension PhotoAlbumViewController {
     
     func downloadImages() {
         
-        // Disable UI and set loading state
+        // Requests the start to download new photos from Flickr Server
+        
+        // Disable UI
         newCollectionButton.isEnabled = false
         noImagesLabel.isHidden = true
         
+        // Start request
         Flickr.shared.getImages(from: mapAnnotation.coordinate.latitude, longitude: mapAnnotation.coordinate.longitude) {
             (success, errorString) in
             
+            // As soon as it finishes, it will give it the expected amount of photos
+            // So we reload to show the correct number of placeholders
             DispatchQueue.main.async {
                 self.collectionView.reloadData()
             }
             
             if success {
-                
                 // If there are no images fetched, then show the no images label
                 if AppManager.main.expectedPhotoAmount == 0 {
                     DispatchQueue.main.async {
@@ -138,6 +153,7 @@ extension PhotoAlbumViewController {
     
     func searchResults() {
         
+        // Performs a search of Managed Objects
         do {
             try self.fetchedResultsController!.performFetch()
         } catch let error {
@@ -166,7 +182,7 @@ extension PhotoAlbumViewController {
         searchResults()
             
         if let count = fetchedResultsController!.fetchedObjects?.count, count > 0 {
-            // Reload collection view data
+            // If there are images in this existing pin, the update the collection view
             AppManager.main.expectedPhotoAmount = count
             collectionView.reloadData()
         } else {
@@ -199,22 +215,30 @@ extension PhotoAlbumViewController {
 extension PhotoAlbumViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        // This makes sure I have the right amount of placeholders before images are loaded
         return AppManager.main.expectedPhotoAmount
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FlickrImageCell", for: indexPath) as! TripCollectionViewCell
         
+        // Add the placeholder to the image
         cell.imageView.image = UIImage(named: "placeholder")
         
+        // If I don't perform this check, Swift might try to load objects that have not been created yet,
+        // therefore it would cause a horrible crash
         if let count = (fetchedResultsController?.fetchedObjects)?.count, count > indexPath.row {
             
             let photo = fetchedResultsController?.object(at: indexPath) as? Photo
             
+            // If the current photo has image data, then load that image and replace the placeholder.
             if let image = photo?.image {
                 cell.imageView.image = UIImage(data: image)
             }
             
+            // When all images are loaded, enable the newCollectionButton
+            // This also makes sure that if it tried to download and did not find any
+            // the user cannot start creating multiple requests for photos that are not there right after one another
             if count == AppManager.main.expectedPhotoAmount {
                 // Enable UI
                 DispatchQueue.main.async {
@@ -234,6 +258,10 @@ extension PhotoAlbumViewController: UICollectionViewDataSource {
 extension PhotoAlbumViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        // Handles the deletions of photos
+        
+        // First, find that selected photo, then remove it from the context, and decrease the number of expected photos by one
         let selectedPhoto = fetchedResultsController?.object(at: indexPath) as! Photo
         AppManager.main.coreDataStack.context.delete(selectedPhoto)
         AppManager.main.expectedPhotoAmount -= 1
@@ -246,6 +274,9 @@ extension PhotoAlbumViewController: UICollectionViewDelegate {
 extension PhotoAlbumViewController: NSFetchedResultsControllerDelegate {
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        
+        // Very powerful single line. This is what makes sure that the collection view is updated everytime the content in the context
+        // is update, like loading new photos or deleting photos.
         collectionView.reloadData()
     }
     

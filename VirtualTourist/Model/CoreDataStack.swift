@@ -10,6 +10,8 @@ import CoreData
 
 struct CoreDataStack {
     
+    // MARK: Properties
+    
     private let model: NSManagedObjectModel
     let coordinator: NSPersistentStoreCoordinator
     private let modelURL: URL
@@ -17,6 +19,8 @@ struct CoreDataStack {
     let context: NSManagedObjectContext
     let persistingContext: NSManagedObjectContext
     let backgroundContext: NSManagedObjectContext
+    
+    // MARK: Initializer
     
     init?(modelName: String) {
         
@@ -82,6 +86,8 @@ extension CoreDataStack {
 extension CoreDataStack {
     
     func performBackgroundBatchOperations(batch: @escaping (NSManagedObjectContext) -> Void) {
+        
+        // This method I used for creating new objects in the background
         
         backgroundContext.perform {
             
