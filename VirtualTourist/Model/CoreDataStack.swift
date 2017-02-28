@@ -95,7 +95,6 @@ extension CoreDataStack {
             
             do {
                 try self.backgroundContext.save()
-                print("Saved in background context")
             } catch {
                 print("Error saving in background context: \(error)")
             }
@@ -116,7 +115,6 @@ extension CoreDataStack {
             if self.context.hasChanges {
                 do {
                     try self.context.save()
-                    print("Saved in main context.")
                 } catch {
                     print("Error in main context saving: \(error.localizedDescription)")
                 }
@@ -125,7 +123,6 @@ extension CoreDataStack {
                 self.persistingContext.perform {
                     do {
                         try self.persistingContext.save()
-                        print("Saved in persisting context.")
                     } catch {
                         print("Error in the saving context: \(error.localizedDescription)")
                     }

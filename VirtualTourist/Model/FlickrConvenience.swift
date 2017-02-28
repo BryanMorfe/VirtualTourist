@@ -121,9 +121,6 @@ extension Flickr {
                 if let pagesNumber = numberOfPages, pagesNumber == randomPage {
                     total = min(total, 4000)
                     let numOfPhotos = Double(total).truncatingRemainder(dividingBy: Double(perPage)) > 0 ? Double(total).truncatingRemainder(dividingBy: Double(perPage)) : Double(total)
-                    print(total)
-                    print(pagesNumber)
-                    print(numOfPhotos)
                     AppManager.main.expectedPhotoAmount = Int(numOfPhotos)
                 } else {
                     // Otherwise, check if there are less photos than the amount per page and assign it

@@ -137,7 +137,6 @@ extension TravelMapViewController {
             
             DispatchQueue.main.async {
                 self.travelMap.addAnnotations(self.annotations)
-                print("Added \(self.annotations.count) annotations.")
             }
         }
     }
