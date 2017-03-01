@@ -95,6 +95,19 @@ class TravelMapViewController: UIViewController {
             annotation.coordinate = touchCoordinate
             travelMap.addAnnotation(annotation)
             annotations.append(annotation)
+            
+            // Check if it's an existing pin else create a new pin object and assign to current working pin in app manager.
+            if let pin = AppManager.main.getPin(with: touchCoordinate.latitude, longitude: touchCoordinate.longitude) {
+                AppManager.main.currentPin = pin
+            } else {
+                // Because the Photo Managed Object in created in the background context, we need to make sure that this Pin is also in the
+                // background context. Also, that assures the UI does not get blocked from loading things.
+                AppManager.main.coreDataStack.performBackgroundBatchOperations {
+                    backgroundContext in
+                    AppManager.main.currentPin = Pin(latitude: touchCoordinate.latitude, longitude: touchCoordinate.longitude, context: backgroundContext)
+                    AppManager.main.pins.append(AppManager.main.currentPin!)
+                }
+            }
         }
         
     }
@@ -200,20 +213,6 @@ extension TravelMapViewController: MKMapViewDelegate {
         photoAlbumController.mapAnnotation = view.annotation as! MKPointAnnotation
         
         view.setSelected(false, animated: false) // Deselect pin
-        
-        // Check if it's an existing pin else create a new pin object and assign to current working pin in app manager.
-        let coordinate = view.annotation!.coordinate
-        if let pin = AppManager.main.getPin(with: coordinate.latitude, longitude: coordinate.longitude) {
-            AppManager.main.currentPin = pin
-        } else {
-            // Because the Photo Managed Object in created in the background context, we need to make sure that this Pin is also in the
-            // background context. Also, that assures the UI does not get blocked from loading things.
-            AppManager.main.coreDataStack.performBackgroundBatchOperations {
-                backgroundContext in
-                AppManager.main.currentPin = Pin(latitude: coordinate.latitude, longitude: coordinate.longitude, context: backgroundContext)
-                AppManager.main.pins.append(AppManager.main.currentPin!)
-            }
-        }
         
         navigationController!.pushViewController(photoAlbumController, animated: true)
     }
