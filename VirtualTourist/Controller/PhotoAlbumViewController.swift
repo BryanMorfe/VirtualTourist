@@ -24,6 +24,8 @@ class PhotoAlbumViewController: UIViewController {
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var collectionViewFlowLayout: UICollectionViewFlowLayout!
     
+    var isLoading = false
+    
     // MARK: Methods
     
     override func viewDidLoad() {
@@ -84,6 +86,8 @@ extension PhotoAlbumViewController {
         
         // Requests the start to download new photos from Flickr Server
         
+        isLoading = true
+        
         // Disable UI
         newCollectionButton.isEnabled = false
         noImagesLabel.isHidden = true
@@ -107,6 +111,7 @@ extension PhotoAlbumViewController {
                 }
                 
             } else {
+                self.isLoading = false
                 print(errorString!)
             }
             
@@ -240,6 +245,7 @@ extension PhotoAlbumViewController: UICollectionViewDataSource {
             // This also makes sure that if it tried to download and did not find any
             // the user cannot start creating multiple requests for photos that are not there right after one another
             if count == AppManager.main.expectedPhotoAmount {
+                isLoading = false
                 // Enable UI
                 DispatchQueue.main.async {
                     self.newCollectionButton.isEnabled = true
@@ -261,6 +267,11 @@ extension PhotoAlbumViewController: UICollectionViewDelegate {
         
         // Handles the deletions of photos
         
+        // Does not allow photo deletion while images are being downloaded
+        if isLoading {
+            return
+        }
+        
         // First, find that selected photo, then remove it from the context, and decrease the number of expected photos by one
         let selectedPhoto = fetchedResultsController?.object(at: indexPath) as! Photo
         AppManager.main.coreDataStack.context.delete(selectedPhoto)
@@ -273,11 +284,20 @@ extension PhotoAlbumViewController: UICollectionViewDelegate {
 
 extension PhotoAlbumViewController: NSFetchedResultsControllerDelegate {
     
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
         
-        // Very powerful single line. This is what makes sure that the collection view is updated everytime the content in the context
-        // is update, like loading new photos or deleting photos.
-        collectionView.reloadData()
+        // Handle insertion or deletion of items
+        
+        switch type {
+        case .delete:
+            collectionView.reloadData()
+        case .insert:
+            collectionView.reloadItems(at: [newIndexPath!])
+        case .update:
+            fallthrough
+        case .move:
+            return
+        }
     }
     
 }
