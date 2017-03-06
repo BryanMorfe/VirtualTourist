@@ -48,13 +48,32 @@
                                     <outlet property="delegate" destination="BYZ-38-t0r" id="SqV-y9-DpI"/>
                                 </connections>
                             </searchBar>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4w7-wJ-PkN">
+                                <rect key="frame" x="0.0" y="623" width="375" height="44"/>
+                                <items>
+                                    <barButtonItem title="Travel" id="QHj-6B-GIu">
+                                        <connections>
+                                            <action selector="travel" destination="BYZ-38-t0r" id="dfU-l3-bYK"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="zqo-r0-ONr"/>
+                                    <barButtonItem title="Select" id="FKJ-y1-j9n">
+                                        <connections>
+                                            <action selector="enableSelectMode" destination="BYZ-38-t0r" id="Hml-sp-eLQ"/>
+                                        </connections>
+                                    </barButtonItem>
+                                </items>
+                            </toolbar>
                         </subviews>
                         <color key="backgroundColor" red="1" green="0.99999988080000002" blue="0.99999141690000004" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                         <constraints>
                             <constraint firstItem="cEC-HS-9EW" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="1Ai-cw-H9e"/>
                             <constraint firstAttribute="trailing" secondItem="cEC-HS-9EW" secondAttribute="trailing" id="VDe-uk-stp"/>
                             <constraint firstItem="WGS-Yx-VIp" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="VmE-Qf-Umq"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="4w7-wJ-PkN" secondAttribute="bottom" id="Wlc-9b-2QO"/>
                             <constraint firstItem="WGS-Yx-VIp" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="XwJ-f1-1EV"/>
+                            <constraint firstAttribute="trailing" secondItem="4w7-wJ-PkN" secondAttribute="trailing" id="Zj8-fq-uJY"/>
+                            <constraint firstItem="4w7-wJ-PkN" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="cQi-59-JIq"/>
                             <constraint firstItem="WGS-Yx-VIp" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" id="dYm-fG-tQ3"/>
                             <constraint firstItem="WGS-Yx-VIp" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="haO-4Q-1Va"/>
                             <constraint firstItem="cEC-HS-9EW" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="ncC-hm-HMb"/>
@@ -66,10 +85,18 @@
                                 <action selector="showInstructions" destination="BYZ-38-t0r" id="BBW-at-kmh"/>
                             </connections>
                         </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" systemItem="trash" id="i10-4y-TB5">
+                            <connections>
+                                <action selector="deleteSelectedPins" destination="BYZ-38-t0r" id="DsD-2I-B1C"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
                     <connections>
+                        <outlet property="deleteButton" destination="i10-4y-TB5" id="9Lx-QH-lsv"/>
                         <outlet property="searchBar" destination="cEC-HS-9EW" id="U5C-SL-sOD"/>
+                        <outlet property="selectButton" destination="FKJ-y1-j9n" id="cvb-h4-6A2"/>
+                        <outlet property="travelButton" destination="QHj-6B-GIu" id="lab-RY-SYE"/>
                         <outlet property="travelMap" destination="WGS-Yx-VIp" id="aht-Xn-wmj"/>
                     </connections>
                 </viewController>

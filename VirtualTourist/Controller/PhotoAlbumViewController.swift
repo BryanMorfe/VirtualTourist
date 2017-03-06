@@ -17,6 +17,8 @@ class PhotoAlbumViewController: UIViewController {
     var fetchedResultsController: NSFetchedResultsController<NSFetchRequestResult>?
     var mapAnnotation: MKPointAnnotation!
     var noImagesLabel: UILabel!
+    var deleteButton: UIBarButtonItem!
+    var selectedPaths: [IndexPath] = []
     
     @IBOutlet weak var tripMap: MKMapView!
     @IBOutlet weak var newCollectionButton: UIBarButtonItem!
@@ -24,7 +26,13 @@ class PhotoAlbumViewController: UIViewController {
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var collectionViewFlowLayout: UICollectionViewFlowLayout!
     
-    var isLoading = false
+    var isLoading = false {
+        didSet {
+            DispatchQueue.main.async {
+                self.newCollectionButton.isEnabled = !self.isLoading
+            }
+        }
+    }
     
     // MARK: Methods
     
@@ -40,7 +48,7 @@ class PhotoAlbumViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(updateViewsFrames), name: .UIDeviceOrientationDidChange, object: nil)
         
         // Start fetching asynchronously
-        // If it's done synchronously, when an existing pin is tapped, and is fetching all managed object photos,
+        // If it's done synchronously, when an existing pin is tapped and is fetching all managed object photos,
         // the UI will be bloked for a brief second or two.
         DispatchQueue.main.async {
             self.startFetch()
@@ -76,6 +84,18 @@ class PhotoAlbumViewController: UIViewController {
         downloadImages()
     }
     
+    func deletePhotos() {
+        deleteButton.isEnabled = false
+        
+        for path in selectedPaths {
+            let selectedPhoto = fetchedResultsController?.object(at: path) as! Photo
+            AppManager.main.coreDataStack.context.delete(selectedPhoto)
+        }
+        
+        AppManager.main.expectedPhotoAmount -= selectedPaths.count
+        
+    }
+    
 }
 
 // MARK: Convenience Methods
@@ -89,7 +109,6 @@ extension PhotoAlbumViewController {
         isLoading = true
         
         // Disable UI
-        newCollectionButton.isEnabled = false
         noImagesLabel.isHidden = true
         
         // Start request
@@ -154,6 +173,20 @@ extension PhotoAlbumViewController {
         
         collectionView.addSubview(noImagesLabel)
         
+        /* Delete button */
+        deleteButton = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(deletePhotos))
+        deleteButton.isEnabled = false
+        navigationItem.rightBarButtonItem = deleteButton
+        
+    }
+    
+    func deselect(indexPath: IndexPath) {
+        for i in 0..<selectedPaths.count {
+            if selectedPaths[i].row == indexPath.row {
+                selectedPaths.remove(at: i)
+                break
+            }
+        }
     }
     
     func searchResults() {
@@ -245,11 +278,8 @@ extension PhotoAlbumViewController: UICollectionViewDataSource {
             // This also makes sure that if it tried to download and did not find any
             // the user cannot start creating multiple requests for photos that are not there right after one another
             if count == AppManager.main.expectedPhotoAmount {
+                // This variable updates the newCollectionButton asynchronously
                 isLoading = false
-                // Enable UI
-                DispatchQueue.main.async {
-                    self.newCollectionButton.isEnabled = true
-                }
             }
             
         }
@@ -273,9 +303,25 @@ extension PhotoAlbumViewController: UICollectionViewDelegate {
         }
         
         // First, find that selected photo, then remove it from the context, and decrease the number of expected photos by one
-        let selectedPhoto = fetchedResultsController?.object(at: indexPath) as! Photo
-        AppManager.main.coreDataStack.context.delete(selectedPhoto)
-        AppManager.main.expectedPhotoAmount -= 1
+        deleteButton.isEnabled = true
+        let cell = collectionView.cellForItem(at: indexPath)
+        let desiredOpacity: Float = cell!.layer.opacity < 1 ? 1.0 : 0.3
+        
+        if desiredOpacity == 1 {
+            
+            deselect(indexPath: indexPath)
+            
+            if selectedPaths.count == 0 {
+                deleteButton.isEnabled = false
+            }
+            
+        } else {
+            selectedPaths.append(indexPath)
+        }
+        
+        UIView.animate(withDuration: 0.3) {
+            cell?.layer.opacity = desiredOpacity
+        }
     }
     
 }
@@ -290,13 +336,14 @@ extension PhotoAlbumViewController: NSFetchedResultsControllerDelegate {
         
         switch type {
         case .delete:
-            collectionView.reloadData()
+            collectionView.deleteItems(at: selectedPaths)
+            selectedPaths = []
         case .insert:
-            collectionView.reloadItems(at: [newIndexPath!])
+            break
         case .update:
-            fallthrough
+            collectionView.reloadItems(at: [indexPath!])
         case .move:
-            return
+            break
         }
     }
     

@@ -18,15 +18,33 @@ class TravelMapViewController: UIViewController {
     var annotations = [MKAnnotation]()
     var tapGestureRecognizer: UIGestureRecognizer!
     
+    var selectMode: Bool = false
+    var selectedPins: [MKAnnotation] = []
+    var queuedPin: MKAnnotationView?
+    
     @IBOutlet weak var travelMap: MKMapView!
     @IBOutlet weak var searchBar: UISearchBar!
+    @IBOutlet weak var deleteButton: UIBarButtonItem!
+    @IBOutlet weak var travelButton: UIBarButtonItem!
+    @IBOutlet weak var selectButton: UIBarButtonItem!
     
     // MARK: Methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        /* Setup */
+        
+        // Map
         configureMap()
+        
+        // Gestures
         tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissSearchBar))
+        
+        // Bar Buttons
+        deleteButton.isEnabled = false
+        travelButton.isEnabled = false
+        selectButton.isEnabled = false
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -44,6 +62,8 @@ class TravelMapViewController: UIViewController {
         }
     }
     
+    // MARK: Actions
+    
     @IBAction func showInstructions() {
         
         // Because the instructions are in portrait, make it portrait before presenting it.
@@ -53,6 +73,55 @@ class TravelMapViewController: UIViewController {
         
         let controller = FlightInstructionsViewController()
         present(controller, animated: true, completion: nil)
+    }
+    
+    @IBAction func deleteSelectedPins() {
+        deleteButton.isEnabled = false
+        travelButton.isEnabled = false
+        selectButton.isEnabled = false
+        
+        for pin in selectedPins {
+            travelMap.removeAnnotations(selectedPins)
+            let coordinate = pin.coordinate
+            let managedObjectPin = AppManager.main.getPin(with: coordinate.latitude, longitude: coordinate.longitude)!
+            AppManager.main.coreDataStack.context.delete(managedObjectPin)
+        }
+        
+        selectedPins.removeAll()
+    }
+    
+    @IBAction func travel() {
+        
+        deleteButton.isEnabled = false
+        selectButton.isEnabled = false
+        
+        if let pin = queuedPin {
+            
+            // Create a instance of the PhotoAlbumView with storyboard instatiation
+            let photoAlbumController = storyboard?.instantiateViewController(withIdentifier: "PhotoAlbumViewController") as! PhotoAlbumViewController
+            photoAlbumController.mapAnnotation = pin.annotation as! MKPointAnnotation
+            
+            pin.setSelected(false, animated: false) // Deselect pin
+            AppManager.main.currentPin = AppManager.main.getPin(with: pin.annotation!.coordinate.latitude, longitude: pin.annotation!.coordinate.longitude)
+            
+            navigationController!.pushViewController(photoAlbumController, animated: true)
+            
+        }
+        
+    }
+    
+    @IBAction func enableSelectMode() {
+        
+        // Select Mode
+        deleteButton.isEnabled = true
+        selectMode = true
+        
+        // Also, select the currently tapped on pin by calling the delegate
+        // method again
+        if let pin = queuedPin {
+            mapView(travelMap, didSelect: pin)
+        }
+        
     }
     
     func configureMap() {
@@ -85,6 +154,12 @@ class TravelMapViewController: UIViewController {
     func dropPin(gestureRecognizer: UILongPressGestureRecognizer) {
         
         // Manages the tap and hold gesture.
+        
+        // If it's in select mode, do not allow to drop new pins
+        
+        if selectMode {
+            return
+        }
         
         if gestureRecognizer.state == .began {
             
@@ -168,6 +243,18 @@ extension TravelMapViewController {
         AppManager.main.mapState = mapStateDictionary as [String : AnyObject]
     }
     
+    func deselect(pin: MKPointAnnotation) {
+        
+        for i in 0..<selectedPins.count {
+            let coordinate = selectedPins[i].coordinate
+            if coordinate.latitude == pin.coordinate.latitude && coordinate.longitude == pin.coordinate.longitude {
+                selectedPins.remove(at: i)
+                break
+            }
+        }
+        
+    }
+    
     func dismissSearchBar(_ tapGesture: UITapGestureRecognizer) {
         
         // Stops search bar editing when map is tapped and is searching
@@ -208,13 +295,38 @@ extension TravelMapViewController: MKMapViewDelegate {
         
         // Manage view clicking
         
-        // Create a instance of the PhotoAlbumView with storyboard instatiation
-        let photoAlbumController = storyboard?.instantiateViewController(withIdentifier: "PhotoAlbumViewController") as! PhotoAlbumViewController
-        photoAlbumController.mapAnnotation = view.annotation as! MKPointAnnotation
+        if selectMode {
+            
+            let desiredOpacity: Float = view.layer.opacity < 1 ? 1.0 : 0.3
+            
+            // If the desired opacity is 1, the user is trying to deselect the pin
+            if desiredOpacity == 1 {
+                
+                if selectedPins.count == 0 {
+                    deleteButton.isEnabled = false
+                }
+                
+                deselect(pin: view.annotation as! MKPointAnnotation)
+                
+            } else {
+                selectedPins.append(view.annotation as! MKPointAnnotation)
+            }
+            
+            UIView.animate(withDuration: 0.3) {
+                view.layer.opacity = desiredOpacity
+            }
+            
+            return
+        }
         
-        view.setSelected(false, animated: false) // Deselect pin
+        // Enable options
+        travelButton.isEnabled = true
+        selectButton.isEnabled = true
         
-        navigationController!.pushViewController(photoAlbumController, animated: true)
+        // Acknowledge currently selected pin
+        queuedPin = view
+        
+        
     }
     
     func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {

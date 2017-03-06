@@ -42,7 +42,7 @@ extension Flickr {
             static let jsonFormat = "json"
             static let disableJSONCallback = "1"
             static let enableSafeSearch = "1"
-            static let perPage = 102
+            static let perPage = 30
         }
         
         struct JSONResponseKeys {
