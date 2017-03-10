@@ -17,7 +17,7 @@ Apart from the features, these apps require certain technology to be used to con
 	- [Extra Features](#extra-features)
 3. [Technology](#technology)
 	- [Required Technology](#required-technology)
-        - [Extra Technology](#extra-technology)
+	- [Extra Technology](#extra-technology)
 4. [Credits](#credits)
 5. [Notes](#notes)
 
