@@ -33,7 +33,6 @@ class FlightInstructionsViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if AppManager.main.isFirstLaunch == true {
-            AppManager.main.isFirstLaunch = false
             performWelcomeAnimation {
                 self.performInstructionsAnimation()
             }

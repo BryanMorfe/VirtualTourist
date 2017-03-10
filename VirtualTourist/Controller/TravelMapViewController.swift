@@ -13,6 +13,8 @@ import CoreData
 class TravelMapViewController: UIViewController {
     
     // MARK: Properties
+    static var showedInstructionsController: Bool = false
+    static var showedInstructionsAnnotation: Bool = !AppManager.main.isFirstLaunch
     
     var fetchedRequestController: NSFetchedResultsController<NSFetchRequestResult>?
     var annotations = [MKAnnotation]()
@@ -41,23 +43,28 @@ class TravelMapViewController: UIViewController {
         // Gestures
         tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissSearchBar))
         
-        // Bar Buttons
-        deleteButton.isEnabled = false
-        travelButton.isEnabled = false
-        selectButton.isEnabled = false
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         loadPins()
+        travelMap.deselectAnnotation(travelMap.selectedAnnotations.first, animated: false)
+        
+        // Bar Buttons
+        deleteButton.isEnabled = false
+        travelButton.isEnabled = false
+        selectButton.isEnabled = false
+        
+        selectMode = false
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         // For first launches
-        if AppManager.main.isFirstLaunch == true {
+        if AppManager.main.isFirstLaunch == true && !TravelMapViewController.showedInstructionsController {
             // Because the instructions/welcome screen are in portrait, make it portrait before presenting it.
+            TravelMapViewController.showedInstructionsController = true // Tell it to not show it more even if it's first launch
             showInstructions() // The intructions view controller presents the welcome screen for first timers.
         }
     }
@@ -88,6 +95,7 @@ class TravelMapViewController: UIViewController {
         }
         
         selectedPins.removeAll()
+        selectMode = false
     }
     
     @IBAction func travel() {
