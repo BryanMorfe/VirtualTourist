@@ -2,7 +2,7 @@
 
 ## Index
 1. [Overview](#overview)
-	Description
+	- Description
 2. [Features](#features)
 3. [Technology](#technology)
 4. [Credit](#credit)
