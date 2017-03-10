@@ -1,8 +1,8 @@
 # VirtualTourist
 
 ## Index
-[Overview](#overview)
-[Features](#features)
+- [Overview](#overview)
+- [Features](#features)
 
 ## Overview
 
