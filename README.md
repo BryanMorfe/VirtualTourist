@@ -2,11 +2,11 @@
 
 #### Brief
 
-*VirtualTourist is a project required to graduate as an iOS Developer from the [Udacity](https://www.udacity.com) [iOS Developer Nanodegree](https://www.udacity.com/course/ios-developer-nanodegree--nd003) Program.
+VirtualTourist is a project *required* to graduate as an *iOS Developer* from the [Udacity](https://www.udacity.com) [iOS Developer Nanodegree](https://www.udacity.com/course/ios-developer-nanodegree--nd003) Program.
 
-Every required iOS app has a number of [features](#features) that are required to for the project to be valid. Those features are shown below in [required features](#required-features). However, the student is free to add any additioinal features that could enhance the app and make it stand out. Those are under [extra features](#extra-features).
+Every required iOS projects has a number of [features](#features) that are *required* to for the project to be valid. Those features are shown below in [required features](#required-features). However, the student is free to add any additioinal features that could enhance the app and make it stand out. Those are under [extra features](#extra-features).
 
-Apart from the features, these apps require certain technology to be used to conform to the requirements. These technologies are listed in the [technology section](#technology), more specifically in the [required technology section](#required-technology). The student is free to use any additional frameworks / libraries or to satisfy any of the desired features, these are listed under [extra technology](#extra-technology).*
+Apart from the features, these apps *require* certain technology to be used to conform to the requirements. These technologies are listed in the [technology section](#technology), more specifically in the [required technology section](#required-technology). The student is free to use any additional frameworks / libraries or to satisfy any of the desired features, these are listed under [extra technology](#extra-technology).
 
 ## Index
 1. [Overview](#overview)
@@ -32,15 +32,25 @@ VirtualTourist is an iOS App that allows users to search or select a location fr
 ## Features
 
 ### Required Features
+- Some req feature
+- another req feature
 
 ### Extra Features
+- Some extra feat
+- Another Extra Feat
 
 ## Technology
 
 ### Required Technology
+- Core Data
+- Another req technology
 
 ### Extra Technology
+- Some extra tech
+- Another extra tech
 
 ## Credits
+
+This project is an iOS app required to graduate as an iOS Developer from Udacity, therefore the idea behind it goes to Udacity. However, the code was programmed by me, and the idea behind the extra features and technology also belongs to me.
 
 ## Notes
