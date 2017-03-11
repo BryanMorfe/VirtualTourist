@@ -36,6 +36,7 @@ VirtualTourist should allow users to navigate a map with the normal map gestures
 
 ### Required Features
 - Must have a navigable map
+- The state of the map should be persisted (region and zoom)
 - Must allow users to use a touch and hold gesture to drop pins
 - Must allow users to tap on the pin and navigate to another view controller that shows the region of the pin and start downloading images
 - Images must be shown in a collection view
@@ -48,9 +49,10 @@ VirtualTourist should allow users to navigate a map with the normal map gestures
 ### Extra Features
 - First time users will have a welcome screen and an instruction that will automatically appear
 - Instruction controller that is accessible if the user needs instructions
+- Ability to search for a desired location with text
 - When user taps on a pin, they have a change to either "travel" or enter "selection mode"
-- Pin: Selection mode allows users to select different pins and delete them all by tapping on the trash navigation bar button
-- Pin: Travel allows users to go into a view controller and start downloading or retrieving images associated with the pins
+	- Selection mode allows users to select different pins and delete them all by tapping on the trash navigation bar button
+	- Travel allows users to go into a view controller and start downloading or retrieving images associated with the pins
 - Refreshed UI
 - In the photo album view controller: tapping on an image / photo enters into selection mode, allowing users to tap on different images and then using the trash navigation bar button to delete them
 
@@ -58,14 +60,32 @@ VirtualTourist should allow users to navigate a map with the normal map gestures
 
 ### Required Technology
 - Core Data
-- Another req technology
+	- Used as a database to persist the pins and the images associated with the pins
+- User Default
+	- Used to persisted the state of the map (current region and span)
+- Map Kit
+	- The map technology used for the app
+- Navigation Controller
+	- To navigate between map and album controllers
+- Collection View
+	- To use as the photo album for the presented photos
+- HTTP Requests (URLSession, URLRequest, URL...)
+	- To connect to the Flickr API and make the photo requests
 
 ### Extra Technology
-- Some extra tech
-- Another extra tech
+- Core Location (conveniently included in the MapKit framework)
+	- To geocode the text in the users search
+- Core Animation
+	- To animate text in the instructions view controller
+	- To animate the selection of pins and images
+	- To add gradient CAGradientLayer into the instructions view controller
+
+## Design Analysis
 
 ## Credits
 
 This project is an iOS app required to graduate as an iOS Developer from Udacity, therefore the idea behind it goes to Udacity. However, the code was programmed by me, and the idea behind the extra features and extra technology belongs to me.
 
 ## Notes
+
+No notes at this time.
