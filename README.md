@@ -8,7 +8,7 @@ Every required iOS projects has a number of [features](#features) that are *requ
 
 Apart from the features, these apps *require* certain technology to be used to conform to the requirements. These technologies are listed in the [technology(#technology) section, more specifically in the [required technology](#required-technology) section. The student is free to use any additional frameworks / libraries or technology to satisfy any of the desired features, these are listed under [extra technology](#extra-technology).
 
-This readme also includes a [design analysis](#design-analysis) section that tells the reader about the thought process behind the app, including the decision making on the technologies used, features added, to the more deep decisions about algoriths and code decisions.
+This readme also includes a [design analysis](#design-analysis) section that tells the reader about the thought process behind the app, including the decision making on the technologies used, features added, located in the [abstract](#abstract), to the more deep decisions about algorithms and code decisions, divided into [Model](#model), [View](#view), and [Controller](#controller).
 
 ## Index
 1. [Overview](#overview)
