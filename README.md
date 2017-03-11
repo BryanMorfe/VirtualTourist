@@ -11,15 +11,16 @@ Apart from the features, these apps *require* certain technology to be used to c
 ## Index
 1. [Overview](#overview)
 	- [Description](#description)
-	- [What does it do?](#what-does-it-do)
+	- [Basic Requirements](#basic-requirements)
 2. [Features](#features)
 	- [Required Features](#required-features)
 	- [Extra Features](#extra-features)
 3. [Technology](#technology)
 	- [Required Technology](#required-technology)
 	- [Extra Technology](#extra-technology)
-4. [Credits](#credits)
-5. [Notes](#notes)
+4. [Design Analysis](#design-analysis)
+5. [Credits](#credits)
+6. [Notes](#notes)
 
 ## Overview
 
@@ -27,17 +28,31 @@ Apart from the features, these apps *require* certain technology to be used to c
 
 VirtualTourist is an iOS App that allows users to search or select a location from a map and drop a pin. After the pin is dropped, users can tap on the pin and download photos associated with the pin's coordinates.
 
-### What does it do?
+### Basic Requirements 
+
+VirtualTourist should allow users to navigate a map with the normal map gestures (zooming, moving, rotating), and use a long hold gesture to drop a pin. After said pin is dropped, it should allow users to tap on the pin and with a navigation controller, push to a controller that shows the region of the map and download images with the pins coordinates using the Flickr API.
 
 ## Features
 
 ### Required Features
-- Some req feature
-- another req feature
+- Must have a navigable map
+- Must allow users to use a touch and hold gesture to drop pins
+- Must allow users to tap on the pin and navigate to another view controller that shows the region of the pin and start downloading images
+- Images must be shown in a collection view
+- All images that will be loaded must have a placeholder while they load
+- Images must appear as they load in their correct cell
+- User should be able to tap on an image and delete it
+- The pins and images associated with the pins must be persisted on the phone
+- All already downloaded images must be shown instead of redownloaded
 
 ### Extra Features
-- Some extra feat
-- Another Extra Feat
+- First time users will have a welcome screen and an instruction that will automatically appear
+- Instruction controller that is accessible if the user needs instructions
+- When user taps on a pin, they have a change to either "travel" or enter "selection mode"
+- Pin: Selection mode allows users to select different pins and delete them all by tapping on the trash navigation bar button
+- Pin: Travel allows users to go into a view controller and start downloading or retrieving images associated with the pins
+- Refreshed UI
+- In the photo album view controller: tapping on an image / photo enters into selection mode, allowing users to tap on different images and then using the trash navigation bar button to delete them
 
 ## Technology
 
@@ -51,6 +66,6 @@ VirtualTourist is an iOS App that allows users to search or select a location fr
 
 ## Credits
 
-This project is an iOS app required to graduate as an iOS Developer from Udacity, therefore the idea behind it goes to Udacity. However, the code was programmed by me, and the idea behind the extra features and technology also belongs to me.
+This project is an iOS app required to graduate as an iOS Developer from Udacity, therefore the idea behind it goes to Udacity. However, the code was programmed by me, and the idea behind the extra features and extra technology belongs to me.
 
 ## Notes
