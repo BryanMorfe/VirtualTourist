@@ -6,7 +6,9 @@ VirtualTourist is a project *required* to graduate as an *iOS Developer* from th
 
 Every required iOS projects has a number of [features](#features) that are *required* to for the project to be valid. Those features are shown below in [required features](#required-features). However, the student is free to add any additioinal features that could enhance the app and make it stand out. Those are under [extra features](#extra-features).
 
-Apart from the features, these apps *require* certain technology to be used to conform to the requirements. These technologies are listed in the [technology section](#technology), more specifically in the [required technology section](#required-technology). The student is free to use any additional frameworks / libraries or to satisfy any of the desired features, these are listed under [extra technology](#extra-technology).
+Apart from the features, these apps *require* certain technology to be used to conform to the requirements. These technologies are listed in the [technology section](#technology), more specifically in the [required technology section](#required-technology). The student is free to use any additional frameworks / libraries or technology to satisfy any of the desired features, these are listed under [extra technology](#extra-technology).
+
+This readme also includes a [design analysis](#design-analysis) section that tells the reader about the thought process behind the app, including the decision making on the technologies used, features added, to the more deep decisions about algoriths and code decisions.
 
 ## Index
 1. [Overview](#overview)
