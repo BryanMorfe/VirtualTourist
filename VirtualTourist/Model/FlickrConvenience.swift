@@ -126,7 +126,6 @@ extension Flickr {
                     // Otherwise, check if there are less photos than the amount per page and assign it
                     AppManager.main.expectedPhotoAmount = min(total, perPage)
                 }
-                print(AppManager.main.expectedPhotoAmount)
                 
                 // Create a reference to the current Pin (current Pin is set when is tapped on in TravelMapViewController)
                 var pin = AppManager.main.currentPin!
@@ -140,16 +139,17 @@ extension Flickr {
                     AppManager.main.currentPin = pin
                 }
                 
-                for photoDictionary in photosArray {
-                    AppManager.main.coreDataStack.performBackgroundBatchOperations(batch: { (backgroundContext) in
-                        // The instance of Photo is added to the context automatically at initialization
-                        // Because Pin and Photo have an inverse relationship, if I assign a Pin to a Photo object, the Photo object
-                        // is automatically added to the Pin's set of photos
-                        // so there is no need to add the photos to the Pin managed object
-                        
-                        let _ = Photo(pin: pin, photoDictionary: photoDictionary, context: backgroundContext)
-                    })
-                }
+                AppManager.main.coreDataStack.performBackgroundBatchOperations(batch: { (backgroundContext) in
+                    // The instance of Photo is added to the context automatically at initialization
+                    // Because Pin and Photo have an inverse relationship, if I assign a Pin to a Photo object, the Photo object
+                    // is automatically added to the Pin's set of photos
+                    // so there is no need to add the photos to the Pin managed object
+                    for photoDictionary in photosArray {
+                        let photo = Photo(pin: pin, context: backgroundContext)
+                        photo.loadData(from: photoDictionary)
+                    }
+                    
+                })
                 
                 // If this pin is not in all loaded pins because it's new, then add it
                 if !AppManager.main.pins.contains(pin) {
