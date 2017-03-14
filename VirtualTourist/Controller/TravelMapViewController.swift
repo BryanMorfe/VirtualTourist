@@ -159,8 +159,17 @@ class TravelMapViewController: UIViewController {
         for pin in selectedPins {
             let coordinate = pin.annotation!.coordinate
             let managedObjectPin = AppManager.main.getPin(with: coordinate.latitude, longitude: coordinate.longitude)!
-            let currentPinContext = managedObjectPin.managedObjectContext! // newly created pins will be in background context, this protects against crash
-            currentPinContext.delete(managedObjectPin)
+            let currentPinContext = managedObjectPin.managedObjectContext!
+            
+            // Newly created pins are in background context,
+            // This makes sure that they are deleted in the right context and saved if appropiate
+            if currentPinContext === AppManager.main.coreDataStack.backgroundContext {
+                AppManager.main.coreDataStack.performBackgroundBatchOperations(batch: { (backgroundContext) in
+                    backgroundContext.delete(managedObjectPin)
+                })
+            } else {
+                AppManager.main.coreDataStack.context.delete(managedObjectPin)
+            }
             travelMap.removeAnnotation(pin.annotation!)
         }
         
@@ -264,7 +273,9 @@ extension TravelMapViewController {
                 let annotation = MKPointAnnotation()
                 annotation.coordinate = CLLocationCoordinate2DMake(pin.latitude, pin.longitude)
                 annotations.append(annotation)
-                AppManager.main.pins.append(pin)
+                if !AppManager.main.pins.contains(pin) {
+                    AppManager.main.pins.append(pin)
+                }
             }
             
             DispatchQueue.main.async {
