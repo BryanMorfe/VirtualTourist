@@ -145,8 +145,9 @@ extension Flickr {
                     // is automatically added to the Pin's set of photos
                     // so there is no need to add the photos to the Pin managed object
                     for photoDictionary in photosArray {
-                        let photo = Photo(pin: pin, context: backgroundContext)
-                        photo.loadData(from: photoDictionary)
+                        // The Image data is loaded in background so that the loop can iterate without being stopped
+                        // by an image data that hasn't finished loading.
+                        let _ = Photo(pin: pin, photoDictionary: photoDictionary, context: backgroundContext)
                     }
                     
                 })

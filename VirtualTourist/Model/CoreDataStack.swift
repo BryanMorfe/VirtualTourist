@@ -102,6 +102,14 @@ extension CoreDataStack {
         
     }
     
+    func saveInBackground() {
+        do {
+            try self.backgroundContext.save()
+        } catch {
+            print("Error saving in background context: \(error)")
+        }
+    }
+    
 }
 
 // MARK: Save Data
