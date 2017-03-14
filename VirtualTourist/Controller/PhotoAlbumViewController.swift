@@ -353,13 +353,14 @@ extension PhotoAlbumViewController: NSFetchedResultsControllerDelegate {
         switch type {
         case .delete:
             collectionView.deleteItems(at: selectedPaths)
-            selectedPaths = []
+            selectedPaths.removeAll()
         case .insert:
             collectionView.reloadItems(at: [newIndexPath!])
         case .update:
-            break
+            collectionView.reloadItems(at: [indexPath!])
         case .move:
-            break
+            collectionView.reloadItems(at: [indexPath!])
+            collectionView.reloadItems(at: [newIndexPath!])
         }
     }
     
