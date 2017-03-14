@@ -26,6 +26,9 @@ class TravelMapViewController: UIViewController {
     @IBOutlet weak var travelMap: MKMapView!
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var deleteButton: UIBarButtonItem!
+    
+    @IBOutlet weak var selectionModeView: UIView!
+    
     @IBOutlet weak var travelButton: UIBarButtonItem!
     @IBOutlet weak var selectButton: UIBarButtonItem!
     @IBOutlet weak var bottomToolbar: UIToolbar!
@@ -36,6 +39,11 @@ class TravelMapViewController: UIViewController {
         super.viewDidLoad()
         
         /* Setup */
+        selectionModeView.backgroundColor = ViewInterface.Constants.Colors.softRed
+        selectionModeView.layer.cornerRadius = 5
+        selectionModeView.layer.masksToBounds = true
+        selectionModeView.layer.opacity = 0
+        selectionModeView.isHidden = true
         
         // Map
         configureMap()
@@ -64,6 +72,20 @@ class TravelMapViewController: UIViewController {
             // Because the instructions/welcome screen are in portrait, make it portrait before presenting it.
             TravelMapViewController.showedInstructionsController = true // Tell it to not show it more even if it's first launch
             showInstructions() // The intructions view controller presents the welcome screen for first timers.
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        // If it's in selection mode, then disable the selection mode view
+        if selectMode {
+            UIView.animate(withDuration: 0.5, animations: {
+                self.selectionModeView.layer.opacity = 0
+            }, completion: {
+                (_) in
+                self.selectionModeView.isHidden = true
+            })
         }
     }
     
@@ -136,6 +158,13 @@ class TravelMapViewController: UIViewController {
             // Deselect current pin so that it can be reselected with no problem
             travelMap.deselectAnnotation(queuedPin?.annotation, animated: false)
             
+            UIView.animate(withDuration: 0.5, animations: { 
+                self.selectionModeView.layer.opacity = 0
+            }, completion: {
+                (_) in
+                self.selectionModeView.isHidden = true
+            })
+            
         } else {
         
             // Select Mode
@@ -148,6 +177,11 @@ class TravelMapViewController: UIViewController {
                 mapView(travelMap, didSelect: pin)
             }
             
+            selectionModeView.isHidden = false
+            UIView.animate(withDuration: 0.5, animations: { 
+                self.selectionModeView.layer.opacity = 0.8
+            })
+            
         }
         
     }
@@ -159,22 +193,30 @@ class TravelMapViewController: UIViewController {
         for pin in selectedPins {
             let coordinate = pin.annotation!.coordinate
             let managedObjectPin = AppManager.main.getPin(with: coordinate.latitude, longitude: coordinate.longitude)!
-            let currentPinContext = managedObjectPin.managedObjectContext!
             
             // Newly created pins are in background context,
             // This makes sure that they are deleted in the right context and saved if appropiate
-            if currentPinContext === AppManager.main.coreDataStack.backgroundContext {
-                AppManager.main.coreDataStack.performBackgroundBatchOperations(batch: { (backgroundContext) in
+            if managedObjectPin.managedObjectContext! === AppManager.main.coreDataStack.backgroundContext {
+                AppManager.main.coreDataStack.performBackgroundBatchOperations(batch: {
+                    (backgroundContext) in
                     backgroundContext.delete(managedObjectPin)
                 })
             } else {
                 AppManager.main.coreDataStack.context.delete(managedObjectPin)
             }
+            
             travelMap.removeAnnotation(pin.annotation!)
         }
         
         selectedPins.removeAll()
         selectMode = false
+        
+        UIView.animate(withDuration: 0.5, animations: {
+            self.selectionModeView.layer.opacity = 0
+        }, completion: {
+            (_) in
+            self.selectionModeView.isHidden = true
+        })
     }
     
     func configureMap() {
@@ -299,6 +341,8 @@ extension TravelMapViewController {
     }
     
     func deselect(pins: [MKAnnotationView]) {
+        
+        // Deselects all selected pins (all pin views in the array 'selectedPins')
         
         for pin in pins {
             

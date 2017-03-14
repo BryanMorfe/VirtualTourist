@@ -6,6 +6,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -64,15 +65,35 @@
                                     </barButtonItem>
                                 </items>
                             </toolbar>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xGQ-0h-PzU">
+                                <rect key="frame" x="16" y="581" width="343" height="34"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Selection Mode On" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Hd3-5N-n5e">
+                                        <rect key="frame" x="98" y="7" width="146" height="21"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstItem="Hd3-5N-n5e" firstAttribute="centerY" secondItem="xGQ-0h-PzU" secondAttribute="centerY" id="9EI-3r-vSx"/>
+                                    <constraint firstItem="Hd3-5N-n5e" firstAttribute="centerX" secondItem="xGQ-0h-PzU" secondAttribute="centerX" id="kZr-Mw-uEN"/>
+                                    <constraint firstAttribute="height" constant="34" id="z5k-X0-h1u"/>
+                                </constraints>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" red="1" green="0.99999988080000002" blue="0.99999141690000004" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                         <constraints>
                             <constraint firstItem="cEC-HS-9EW" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="1Ai-cw-H9e"/>
+                            <constraint firstItem="xGQ-0h-PzU" firstAttribute="width" secondItem="WGS-Yx-VIp" secondAttribute="width" constant="-32" id="BdI-EF-vJl"/>
+                            <constraint firstItem="xGQ-0h-PzU" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="Igo-PD-XvU"/>
                             <constraint firstAttribute="trailing" secondItem="cEC-HS-9EW" secondAttribute="trailing" id="VDe-uk-stp"/>
                             <constraint firstItem="WGS-Yx-VIp" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="VmE-Qf-Umq"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="4w7-wJ-PkN" secondAttribute="bottom" id="Wlc-9b-2QO"/>
                             <constraint firstItem="WGS-Yx-VIp" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="XwJ-f1-1EV"/>
                             <constraint firstAttribute="trailing" secondItem="4w7-wJ-PkN" secondAttribute="trailing" id="Zj8-fq-uJY"/>
+                            <constraint firstItem="4w7-wJ-PkN" firstAttribute="top" secondItem="xGQ-0h-PzU" secondAttribute="bottom" constant="8" id="ZyD-b3-AnS"/>
                             <constraint firstItem="4w7-wJ-PkN" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="cQi-59-JIq"/>
                             <constraint firstItem="WGS-Yx-VIp" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" id="dYm-fG-tQ3"/>
                             <constraint firstItem="WGS-Yx-VIp" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="haO-4Q-1Va"/>
@@ -97,6 +118,7 @@
                         <outlet property="deleteButton" destination="i10-4y-TB5" id="9Lx-QH-lsv"/>
                         <outlet property="searchBar" destination="cEC-HS-9EW" id="U5C-SL-sOD"/>
                         <outlet property="selectButton" destination="FKJ-y1-j9n" id="cvb-h4-6A2"/>
+                        <outlet property="selectionModeView" destination="xGQ-0h-PzU" id="4ZP-Io-DoK"/>
                         <outlet property="travelButton" destination="QHj-6B-GIu" id="lab-RY-SYE"/>
                         <outlet property="travelMap" destination="WGS-Yx-VIp" id="aht-Xn-wmj"/>
                     </connections>
