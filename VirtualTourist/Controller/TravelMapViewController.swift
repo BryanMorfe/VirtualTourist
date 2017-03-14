@@ -133,6 +133,9 @@ class TravelMapViewController: UIViewController {
             deleteButton.isEnabled = false
             setBottomToolbarEnabled(false)
             
+            // Deselect current pin so that it can be reselected with no problem
+            travelMap.deselectAnnotation(queuedPin?.annotation, animated: false)
+            
         } else {
         
             // Select Mode
@@ -240,7 +243,7 @@ extension TravelMapViewController {
         
         // First remove the ones in annotations so there are no duplicates
         travelMap.removeAnnotations(annotations)
-        annotations = []
+        annotations.removeAll()
         
         // Fetch all Pins
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: AppManager.Constants.EntityNames.pin)
@@ -359,6 +362,10 @@ extension TravelMapViewController: MKMapViewDelegate {
         
         // Manage view clicking
         
+        // Acknowledge currently selected pin
+        queuedPin = view
+        
+        // If it's in selection mode
         if selectMode {
             
             let desiredOpacity: Float = view.layer.opacity < 1 ? 1.0 : 0.3
@@ -385,9 +392,6 @@ extension TravelMapViewController: MKMapViewDelegate {
         
         // Enable bottom toolbar
         setBottomToolbarEnabled(true)
-        
-        // Acknowledge currently selected pin
-        queuedPin = view
         
     }
     
