@@ -51,15 +51,15 @@
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4w7-wJ-PkN">
                                 <rect key="frame" x="0.0" y="623" width="375" height="44"/>
                                 <items>
-                                    <barButtonItem title="Travel" id="QHj-6B-GIu">
+                                    <barButtonItem title="Select Mode" id="FKJ-y1-j9n">
                                         <connections>
-                                            <action selector="travel" destination="BYZ-38-t0r" id="dfU-l3-bYK"/>
+                                            <action selector="toggleSelectMode" destination="BYZ-38-t0r" id="Dui-5s-lIZ"/>
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="zqo-r0-ONr"/>
-                                    <barButtonItem title="Select" id="FKJ-y1-j9n">
+                                    <barButtonItem title="Travel" id="QHj-6B-GIu">
                                         <connections>
-                                            <action selector="enableSelectMode" destination="BYZ-38-t0r" id="Hml-sp-eLQ"/>
+                                            <action selector="travel" destination="BYZ-38-t0r" id="dfU-l3-bYK"/>
                                         </connections>
                                     </barButtonItem>
                                 </items>
@@ -87,12 +87,13 @@
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="trash" id="i10-4y-TB5">
                             <connections>
-                                <action selector="deleteSelectedPins" destination="BYZ-38-t0r" id="DsD-2I-B1C"/>
+                                <action selector="showDeleteAlert" destination="BYZ-38-t0r" id="63f-W9-HhV"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
                     <connections>
+                        <outlet property="bottomToolbar" destination="4w7-wJ-PkN" id="JgV-gd-xN6"/>
                         <outlet property="deleteButton" destination="i10-4y-TB5" id="9Lx-QH-lsv"/>
                         <outlet property="searchBar" destination="cEC-HS-9EW" id="U5C-SL-sOD"/>
                         <outlet property="selectButton" destination="FKJ-y1-j9n" id="cvb-h4-6A2"/>

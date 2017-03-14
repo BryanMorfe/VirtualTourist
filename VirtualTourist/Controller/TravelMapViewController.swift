@@ -14,14 +14,13 @@ class TravelMapViewController: UIViewController {
     
     // MARK: Properties
     static var showedInstructionsController: Bool = false
-    static var showedInstructionsAnnotation: Bool = !AppManager.main.isFirstLaunch
     
     var fetchedRequestController: NSFetchedResultsController<NSFetchRequestResult>?
     var annotations = [MKAnnotation]()
     var tapGestureRecognizer: UIGestureRecognizer!
     
     var selectMode: Bool = false
-    var selectedPins: [MKAnnotation] = []
+    var selectedPins: [MKAnnotationView] = []
     var queuedPin: MKAnnotationView?
     
     @IBOutlet weak var travelMap: MKMapView!
@@ -29,6 +28,7 @@ class TravelMapViewController: UIViewController {
     @IBOutlet weak var deleteButton: UIBarButtonItem!
     @IBOutlet weak var travelButton: UIBarButtonItem!
     @IBOutlet weak var selectButton: UIBarButtonItem!
+    @IBOutlet weak var bottomToolbar: UIToolbar!
     
     // MARK: Methods
     
@@ -50,12 +50,10 @@ class TravelMapViewController: UIViewController {
         loadPins()
         travelMap.deselectAnnotation(travelMap.selectedAnnotations.first, animated: false)
         
-        // Bar Buttons
-        deleteButton.isEnabled = false
-        travelButton.isEnabled = false
-        selectButton.isEnabled = false
+        setBottomToolbarEnabled(false)
         
         selectMode = false
+        deleteButton.isEnabled = false
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -82,20 +80,19 @@ class TravelMapViewController: UIViewController {
         present(controller, animated: true, completion: nil)
     }
     
-    @IBAction func deleteSelectedPins() {
-        deleteButton.isEnabled = false
-        travelButton.isEnabled = false
-        selectButton.isEnabled = false
+    @IBAction func showDeleteAlert() {
         
-        for pin in selectedPins {
-            travelMap.removeAnnotations(selectedPins)
-            let coordinate = pin.coordinate
-            let managedObjectPin = AppManager.main.getPin(with: coordinate.latitude, longitude: coordinate.longitude)!
-            AppManager.main.coreDataStack.context.delete(managedObjectPin)
+        let alertController = UIAlertController(title: "Confirm", message: "Delete the \(selectedPins.count) selected pins?", preferredStyle: .actionSheet)
+        let deleteAction = UIAlertAction(title: "Delete", style: .destructive) { (_) in
+            self.deleteSelectedPins()
         }
         
-        selectedPins.removeAll()
-        selectMode = false
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+        
+        alertController.addAction(cancelAction)
+        alertController.addAction(deleteAction)
+        
+        present(alertController, animated: true)
     }
     
     @IBAction func travel() {
@@ -118,18 +115,54 @@ class TravelMapViewController: UIViewController {
         
     }
     
-    @IBAction func enableSelectMode() {
+    @IBAction func toggleSelectMode() {
         
-        // Select Mode
-        deleteButton.isEnabled = true
-        selectMode = true
+        // Toggle select mode on or off
         
-        // Also, select the currently tapped on pin by calling the delegate
-        // method again
-        if let pin = queuedPin {
-            mapView(travelMap, didSelect: pin)
+        if selectMode {
+            
+            // Exit select mode
+            
+            for view in selectedPins {
+                mapView(travelMap, didSelect: view) // will return opacity to normal
+            }
+            
+            deselect(pins: selectedPins) // deselect all selected pins
+            
+            selectMode = false
+            deleteButton.isEnabled = false
+            setBottomToolbarEnabled(false)
+            
+        } else {
+        
+            // Select Mode
+            deleteButton.isEnabled = true
+            selectMode = true
+        
+            // Also, select the currently tapped on pin by calling the delegate
+            // method again
+            if let pin = queuedPin {
+                mapView(travelMap, didSelect: pin)
+            }
+            
         }
         
+    }
+    
+    func deleteSelectedPins() {
+        deleteButton.isEnabled = false
+        setBottomToolbarEnabled(false)
+        
+        for pin in selectedPins {
+            travelMap.removeAnnotation(pin.annotation!)
+            let coordinate = pin.annotation!.coordinate
+            let managedObjectPin = AppManager.main.getPin(with: coordinate.latitude, longitude: coordinate.longitude)!
+            let currentPinContext = managedObjectPin.managedObjectContext! // newly created pins will be in background context, this protects against crash
+            currentPinContext.delete(managedObjectPin)
+        }
+        
+        selectedPins.removeAll()
+        selectMode = false
     }
     
     func configureMap() {
@@ -251,14 +284,20 @@ extension TravelMapViewController {
         AppManager.main.mapState = mapStateDictionary as [String : AnyObject]
     }
     
-    func deselect(pin: MKPointAnnotation) {
+    func deselect(pins: [MKAnnotationView]) {
         
-        for i in 0..<selectedPins.count {
-            let coordinate = selectedPins[i].coordinate
-            if coordinate.latitude == pin.coordinate.latitude && coordinate.longitude == pin.coordinate.longitude {
-                selectedPins.remove(at: i)
-                break
+        for pin in pins {
+            
+            for i in 0..<selectedPins.count {
+                let pinCoordinate = pin.annotation!.coordinate
+                let selectedPinCoordinate = selectedPins[i].annotation!.coordinate
+                
+                if pinCoordinate.latitude == selectedPinCoordinate.latitude && pinCoordinate.longitude == selectedPinCoordinate.longitude {
+                    selectedPins.remove(at: i)
+                    break
+                }
             }
+            
         }
         
     }
@@ -277,6 +316,17 @@ extension TravelMapViewController {
         
     }
     
+    func setBottomToolbarEnabled(_ enabled: Bool) {
+        travelButton.isEnabled = enabled
+        selectButton.isEnabled = enabled
+        
+        let desiredOpacity: Float = enabled ? 1 : 0.5
+        
+        UIView.animate(withDuration: 0.3) { 
+            self.bottomToolbar.layer.opacity = desiredOpacity
+        }
+    }
+    
 }
 
 
@@ -292,9 +342,15 @@ extension TravelMapViewController: MKMapViewDelegate {
             pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseIdentifier)
         }
         
+        // Make sure that it's fully visible
+        // If a pin is dropped after deletion of other pins, the next one dropped will be a bit transparent
+        // This fixes that. The reason is because pinViews are reused, so they will retain previous opacity
+        pinView!.layer.opacity = 1
+        
         // Adds the nice drop animation for the pin
         // safe to unwrap because it was created if did not exist
         pinView!.animatesDrop = true
+        pinView!.detailCalloutAccessoryView = UIView()
         
         return pinView
     }
@@ -314,10 +370,10 @@ extension TravelMapViewController: MKMapViewDelegate {
                     deleteButton.isEnabled = false
                 }
                 
-                deselect(pin: view.annotation as! MKPointAnnotation)
+                deselect(pins: [view])
                 
             } else {
-                selectedPins.append(view.annotation as! MKPointAnnotation)
+                selectedPins.append(view)
             }
             
             UIView.animate(withDuration: 0.3) {
@@ -327,14 +383,18 @@ extension TravelMapViewController: MKMapViewDelegate {
             return
         }
         
-        // Enable options
-        travelButton.isEnabled = true
-        selectButton.isEnabled = true
+        // Enable bottom toolbar
+        setBottomToolbarEnabled(true)
         
         // Acknowledge currently selected pin
         queuedPin = view
         
-        
+    }
+    
+    func mapView(_ mapView: MKMapView, didDeselect view: MKAnnotationView) {
+        if !selectMode {
+            setBottomToolbarEnabled(false)
+        }
     }
     
     func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {

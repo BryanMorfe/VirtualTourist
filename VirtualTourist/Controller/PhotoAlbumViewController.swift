@@ -84,6 +84,22 @@ class PhotoAlbumViewController: UIViewController {
         downloadImages()
     }
     
+    func showDeleteAlert() {
+        
+        // Confirms to the user whether he wants to deleted the selected photos
+        let alertController = UIAlertController(title: "Confirm", message: "Delete the \(selectedPaths.count) selected photos?", preferredStyle: .actionSheet)
+        let deleteAction = UIAlertAction(title: "Delete", style: .destructive) { (_) in
+            self.deletePhotos()
+        }
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+        
+        alertController.addAction(cancelAction)
+        alertController.addAction(deleteAction)
+        
+        present(alertController, animated: true)
+    }
+    
     func deletePhotos() {
         deleteButton.isEnabled = false
         
@@ -174,7 +190,7 @@ extension PhotoAlbumViewController {
         collectionView.addSubview(noImagesLabel)
         
         /* Delete button */
-        deleteButton = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(deletePhotos))
+        deleteButton = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(showDeleteAlert))
         deleteButton.isEnabled = false
         navigationItem.rightBarButtonItem = deleteButton
         
@@ -339,9 +355,9 @@ extension PhotoAlbumViewController: NSFetchedResultsControllerDelegate {
             collectionView.deleteItems(at: selectedPaths)
             selectedPaths = []
         case .insert:
-            break
+            collectionView.reloadItems(at: [newIndexPath!])
         case .update:
-            collectionView.reloadItems(at: [indexPath!])
+            break
         case .move:
             break
         }
