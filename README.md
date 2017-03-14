@@ -59,6 +59,7 @@ VirtualTourist should allow users to navigate a map with the normal map gestures
 - When user taps on a pin, they have a change to either "travel" or enter "selection mode"
 	- Selection mode allows users to select different pins and delete them all by tapping on the trash navigation bar button
 	- Travel allows users to go into a view controller and start downloading or retrieving images associated with the pins
+- New view telling the user when they are in selection mode
 - Refreshed UI
 - In the photo album view controller: tapping on an image / photo enters into selection mode, allowing users to tap on different images and then using the trash navigation bar button to delete them
 
@@ -85,9 +86,10 @@ VirtualTourist should allow users to navigate a map with the normal map gestures
 	- To animate text in the instructions view controller
 	- To animate the selection of pins and images
 	- To add gradient CAGradientLayer into the instructions view controller
+	- To animate the selection mode view
 
 ## Design Analysis
-
+The design analysis section is not yet ready.
 ### Abstract
 
 ### Model
