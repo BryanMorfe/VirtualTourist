@@ -154,11 +154,11 @@ class TravelMapViewController: UIViewController {
         setBottomToolbarEnabled(false)
         
         for pin in selectedPins {
-            travelMap.removeAnnotation(pin.annotation!)
             let coordinate = pin.annotation!.coordinate
             let managedObjectPin = AppManager.main.getPin(with: coordinate.latitude, longitude: coordinate.longitude)!
             let currentPinContext = managedObjectPin.managedObjectContext! // newly created pins will be in background context, this protects against crash
             currentPinContext.delete(managedObjectPin)
+            travelMap.removeAnnotation(pin.annotation!)
         }
         
         selectedPins.removeAll()
